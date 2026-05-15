@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>84消毒剂配比计算器</title>
+    <style>
+        body {
+            font-family: "Microsoft Yahei",微软雅黑;
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #fff;
+            border: 1px solid #dce4ee;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h3 {
+            text-align: center;
+            color: #005a9c;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+        .item {
+            margin: 14px 0;
+        }
+        label {
+            display:inline-block;
+            width: 160px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            width: 200px;
+            padding: 9px 10px;
+            font-size: 16px;
+            border: 1px solid #b8c8dc;
+            border-radius: 4px;
+            outline: none;
+        }
+        #calcBtn {
+            width: 100%;
+            padding: 11px;
+            background: #005a9c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 17px;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+        .res {
+            margin-top: 15px;
+            padding: 20px;
+            background: #f7fafe;
+            border-radius: 6px;
+            font-size: 18px;
+            line-height: 2.2;
+        }
+        strong {
+            color: #c00000;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #005a9c;
+            font-size: 16px;
+            font-weight: bold;
+            padding-top: 15px;
+            border-top: 1px dashed #eee;
+        }
+        .split{
+            margin:20px 0;height:1px;background:#ccc;
+        }
+    </style>
+</head>
+<body>
+    <h3>环境消杀及痰液84配比计算器</h3>
+
+    <div class="item">
+        <label>痰液量(ml)：</label>
+        <input type="number" id="sputum" placeholder="输入痰液毫升数">
+    </div>
+
+    <div class="split"></div>
+
+    <div class="item">
+        <label>房间长度(米)：</label>
+        <input type="number" id="len" placeholder="输入长度">
+    </div>
+    <div class="item">
+        <label>房间宽度(米)：</label>
+        <input type="number" id="wid" placeholder="输入宽度">
+    </div>
+    <div class="item">
+        <label>墙面高度(米)：</label>
+        <input type="number" id="height" placeholder="输入层高">
+    </div>
+    <div class="item">
+        <label>消杀用量(ml/㎡)：</label>
+        <input type="number" id="dose" value="200">
+    </div>
+    <div class="item">
+        <label>84原液浓度(%)：</label>
+        <input type="number" id="origConc" value="5">
+    </div>
+    <div class="item">
+        <label>环境目标浓度(mg/L)：</label>
+        <input type="number" id="targetEnv" value="1000">
+    </div>
+
+    <button id="calcBtn" onclick="calcAll()">立即计算</button>
+
+    <div class="res" id="result"></div>
+
+    <div class="footer">恩施市疾控中心重大疾病科制作</div>
+
+<script>
+function calcAll(){
+    // 1. 获取输入
+    let sputumMl = parseFloat(document.getElementById('sputum').value) || 0;
+    let L = parseFloat(document.getElementById('len').value) || 0;
+    let W = parseFloat(document.getElementById('wid').value) || 0;
+    let H = parseFloat(document.getElementById('height').value) || 0;
+    let perMl = parseFloat(document.getElementById('dose').value);
+    let origPct = parseFloat(document.getElementById('origConc').value);
+    let targetEnv = parseFloat(document.getElementById('targetEnv').value);
+
+    // 固定痰液消毒浓度
+    const targetSputum = 20000;
+    let origMgL = origPct * 10000;
+
+    // 2. 环境消杀计算 地面+四面墙
+    let floorArea = L * W;
+    let wallArea = 2 * (L + W) * H;
+    let totalArea = floorArea + wallArea;
+    let envTotalMl = totalArea * perMl;
+    let envTotalL = envTotalMl / 1000;
+
+    let envStock = (targetEnv * envTotalL / origMgL) * 1000;
+    let envWater = envTotalMl - envStock;
+
+    let html = "";
+
+    // 3. 判断痰液是否有输入
+    if(sputumMl > 0){
+        // 痰液消毒：配置量=痰液2倍
+        let spuTotalMl = sputumMl * 2;
+        let spuTotalL = spuTotalMl / 1000;
+        let spuStock = (targetSputum * spuTotalL / origMgL) * 1000;
+        let spuWater = spuTotalMl - spuStock;
+
+        html += `<p>【痰液消毒配比】</p >`;
+        html += `<p>需量取84原液：<strong>${spuStock.toFixed(1)} ml</strong></p >`;
+        html += `<p>需加水：<strong>${spuWater.toFixed(1)} ml</strong></p >`;
+        html += `<hr>`;
+    }
+
+    // 4. 环境消杀始终显示
+    html += `<p>【环境消杀配比】</p >`;
+    html += `<p>需量取84原液：<strong>${envStock.toFixed(1)} ml</strong></p >`;
+    html += `<p>需加水：<strong>${envWater.toFixed(1)} ml</strong></p >`;
+
+    document.getElementById('result').innerHTML = html;
+}
+</script>
+</body>
+</html>
