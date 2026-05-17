@@ -27,13 +27,17 @@
             gap:15px;
             margin:14px 0;
             flex-wrap: wrap;
+            align-items: center;
         }
         .item {
             margin: 14px 0;
+            display:flex;
+            align-items: center;
+            gap:8px;
         }
         label {
             display:inline-block;
-            width: 160px;
+            width: 120px;
             color: #333;
             font-weight: 500;
         }
@@ -41,7 +45,7 @@
             width: 85px;
         }
         input {
-            width: 200px;
+            flex:1;
             padding: 9px 10px;
             font-size: 16px;
             border: 1px solid #b8c8dc;
@@ -50,6 +54,7 @@
         }
         .row-item input{
             width: 100px;
+            flex:none;
         }
         .btn-group{
             margin:14px 0;
@@ -142,22 +147,27 @@
     <div class="row-item">
         <div>
             <label>垃圾(L)：</label>
-            <input type="number" id="rubWater" placeholder="输入消毒液总量">
+            <input type="number" id="rubWater" placeholder="消毒液总量">
         </div>
         <div>
             <label>痰液(ml)：</label>
-            <input type="number" id="sputum" placeholder="输入痰液量" oninput="autoSetDose()">
+            <input type="number" id="sputum" placeholder="痰液毫升数" oninput="autoSetDose()">
         </div>
+    </div>
+
+    <div class="item">
+        <label>卫生清洁用品(L)：</label>
+        <input type="number" id="cleanGoods" placeholder="消毒液总量">
     </div>
 
     <div class="row-item">
         <div>
             <label>大便(ml)：</label>
-            <input type="number" id="stool" placeholder="输入大便量">
+            <input type="number" id="stool" placeholder="大便毫升数">
         </div>
         <div>
             <label>小便(ml)：</label>
-            <input type="number" id="urine" placeholder="输入小便量">
+            <input type="number" id="urine" placeholder="小便毫升数">
         </div>
     </div>
 
@@ -222,10 +232,18 @@ function setUnit(u){
     calcAll();
 }
 
+// 痰液有值自动300，无值默认200，可手动改
 function autoSetDose(){
     let val = parseFloat(document.getElementById('sputum').value) || 0;
-    document.getElementById('dose').value = val > 0 ? 300 : 200;
+    if(!document.getElementById('dose').dataset.manual){
+        document.getElementById('dose').value = val > 0 ? 300 : 200;
+    }
 }
+
+// 标记手动修改消杀用量
+document.getElementById('dose').addEventListener('input', function(){
+    this.dataset.manual = "1";
+});
 
 function setType(t){
     let b1=document.getElementById('btn1');
@@ -253,12 +271,14 @@ function formatNum(num){
 function resetAll(){
     document.getElementById('sputum').value = '';
     document.getElementById('rubWater').value = '';
+    document.getElementById('cleanGoods').value = '';
     document.getElementById('stool').value = '';
     document.getElementById('urine').value = '';
     document.getElementById('len').value = '';
     document.getElementById('wid').value = '';
     document.getElementById('height').value = '';
     document.getElementById('dose').value = '200';
+    document.getElementById('dose').removeAttribute('data-manual');
     document.getElementById('origConc').value = '5';
     document.getElementById('targetEnv').value = '500';
     setType(2);
@@ -269,6 +289,7 @@ function resetAll(){
 function calcAll(){
     let sputumMl = parseFloat(document.getElementById('sputum').value) || 0;
     let rubWaterL = parseFloat(document.getElementById('rubWater').value) || 0;
+    let cleanGoodsL = parseFloat(document.getElementById('cleanGoods').value) || 0;
     let stoolMl = parseFloat(document.getElementById('stool').value) || 0;
     let urineMl = parseFloat(document.getElementById('urine').value) || 0;
     let L = parseFloat(document.getElementById('len').value) || 0;
@@ -280,6 +301,7 @@ function calcAll(){
 
     const targetSputum = 20000;
     const targetRubbish = 10000;
+    const targetClean = 1000; // 卫生清洁用品 1000mg/L
     const targetStool = 30000;
     const targetUrine = 10000;
     let origMgL = origPct * 10000;
@@ -295,6 +317,10 @@ function calcAll(){
     // 垃圾消毒
     let rubStock = (targetRubbish * rubWaterL * 1000) / origMgL;
     let rubWater = (rubWaterL * 1000) - rubStock;
+
+    // 卫生清洁用品（输入L，浓度1000mg/L）
+    let cleanStock = (targetClean * cleanGoodsL * 1000) / origMgL;
+    let cleanWater = (cleanGoodsL * 1000) - cleanStock;
 
     // 大便消毒
     let stoolTotalMl = stoolMl * 5;
@@ -315,28 +341,33 @@ function calcAll(){
 
     if(rubWaterL > 0){
         html += `<p>【垃圾消毒配比】</p>`;
-        html += `<p>量取原液：<strong>${formatNum(rubStock)}</strong>，加水：<strong>${formatNum(rubWater)}</strong></p>`;
+        html += `<p>原液：<strong>${formatNum(rubStock)}</strong>，加水：<strong>${formatNum(rubWater)}</strong></p>`;
+        html += `<hr>`;
+    }
+    if(cleanGoodsL > 0){
+        html += `<p>【卫生清洁用品消毒配比】</p>`;
+        html += `<p>原液：<strong>${formatNum(cleanStock)}</strong>，加水：<strong>${formatNum(cleanWater)}</strong></p>`;
         html += `<hr>`;
     }
     if(sputumMl > 0){
         html += `<p>【痰液消毒配比】</p>`;
-        html += `<p>量取原液：<strong>${formatNum(spuStock)}</strong>，加水：<strong>${formatNum(spuWater)}</strong></p>`;
+        html += `<p>原液：<strong>${formatNum(spuStock)}</strong>，加水：<strong>${formatNum(spuWater)}</strong></p>`;
         html += `<hr>`;
     }
     if(stoolMl > 0){
         html += `<p>【大便消毒配比】</p>`;
-        html += `<p>量取原液：<strong>${formatNum(stoolStock)}</strong>，加水：<strong>${formatNum(stoolWater)}</strong></p>`;
+        html += `<p>原液：<strong>${formatNum(stoolStock)}</strong>，加水：<strong>${formatNum(stoolWater)}</strong></p>`;
         html += `<hr>`;
     }
     if(urineMl > 0){
         html += `<p>【小便消毒配比】</p>`;
-        html += `<p>量取原液：<strong>${formatNum(urineStock)}</strong>，加水：<strong>${formatNum(urineWater)}</strong></p>`;
+        html += `<p>原液：<strong>${formatNum(urineStock)}</strong>，加水：<strong>${formatNum(urineWater)}</strong></p>`;
         html += `<hr>`;
     }
 
     html += `<p>【环境消杀配比】</p>`;
-    html += `<p>总面积：<strong>${totalArea.toFixed(2)} ㎡</strong></p>`;
-    html += `<p>量取原液：<strong>${formatNum(envStock)}</strong>，加水：<strong>${formatNum(envWater)}</strong></p>`;
+    html += `<p>消杀总面积：<strong>${totalArea.toFixed(2)} ㎡</strong></p>`;
+    html += `<p>需原液：<strong>${formatNum(envStock)}</strong>，加水：<strong>${formatNum(envWater)}</strong></p>`;
 
     document.getElementById('result').innerHTML = html;
 }
