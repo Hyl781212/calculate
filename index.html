@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>84消毒液配比计算器（恩施市CDC）</title>
+    <title>84消毒液配比计算器</title>
     <style>
         body {
             font-family: "Microsoft Yahei",微软雅黑;
@@ -26,26 +26,21 @@
             display:flex;
             gap:15px;
             margin:14px 0;
-            flex-wrap: wrap;
-            align-items: center;
         }
         .item {
             margin: 14px 0;
-            display:flex;
-            align-items: center;
-            gap:8px;
         }
         label {
             display:inline-block;
-            width: 120px;
+            width: 160px;
             color: #333;
             font-weight: 500;
         }
         .row-item label{
-            width: 85px;
+            width:110px;
         }
         input {
-            flex:1;
+            width: 200px;
             padding: 9px 10px;
             font-size: 16px;
             border: 1px solid #b8c8dc;
@@ -53,8 +48,7 @@
             outline: none;
         }
         .row-item input{
-            width: 100px;
-            flex:none;
+            width:130px;
         }
         .btn-group{
             margin:14px 0;
@@ -87,26 +81,27 @@
             background:#005a9c;
             color:#fff;
         }
-        .calc-row{
-            display:flex;
-            gap:10px;
-            margin:15px 0;
-        }
-        #calcBtn,#resetBtn {
-            flex:1;
+        #calcBtn {
+            width: 100%;
             padding: 11px;
+            background: #005a9c;
+            color: #fff;
             border: none;
             border-radius: 4px;
             font-size: 17px;
             cursor: pointer;
-        }
-        #calcBtn {
-            background: #005a9c;
-            color: #fff;
+            margin: 15px 0;
         }
         #resetBtn {
-            background: #ccc;
-            color: #333;
+            width: 100%;
+            padding: 11px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 17px;
+            cursor: pointer;
+            margin: 15px 0;
         }
         .res {
             margin-top: 15px;
@@ -121,9 +116,7 @@
             font-weight: bold;
         }
         .split{
-            margin:20px 0;
-            height:1px;
-            background:#ccc;
+            margin:20px 0;height:1px;background:#ccc;
         }
         .bottom-info{
             margin-top: 30px;
@@ -134,16 +127,16 @@
             padding-top: 15px;
             border-top: 1px dashed #eee;
         }
-        .notice{
-            margin-top:30px;
-            font-size:9px;
-            line-height:1.6;
-            color:#333;
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #dce4ee;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <h3>84消毒液配比计算器（恩施市CDC）</h3>
+    <h3>84消毒液配比计算器</h3>
 
     <div class="btn-group">
         <button class="type-btn active" id="btn2" onclick="setType(2)">预防性消毒</button>
@@ -152,24 +145,30 @@
 
     <div class="row-item">
         <div>
-            <label>垃圾(L)：</label>
-            <input type="number" id="rubWater" placeholder="输入消毒液总量">
-        </div>
-        <div>
             <label>痰液(ml)：</label>
             <input type="number" id="sputum" placeholder="输入痰液量" oninput="autoSetDose()">
         </div>
-    </div>
-
-    <div class="item">
-        <label>清洁用品(L)：</label>
-        <input type="number" id="cleanGoods" placeholder="输入消毒液总量">
+        <div>
+            <label>清洁用品(ml)：</label>
+            <input type="number" id="cleanWater" placeholder="输入消毒液总量">
+        </div>
     </div>
 
     <div class="row-item">
         <div>
-            <label>大便/呕吐物(L)：</label>
-            <input type="number" id="stool" placeholder="输入大便/呕吐物量">
+            <label>垃圾(ml)：</label>
+            <input type="number" id="rubWater" placeholder="输入消毒液总量">
+        </div>
+        <div>
+            <label>呕吐物(ml)：</label>
+            <input type="number" id="vomit" placeholder="输入呕吐物的量">
+        </div>
+    </div>
+
+    <div class="row-item">
+        <div>
+            <label>大便(ml)：</label>
+            <input type="number" id="feces" placeholder="输入大便量">
         </div>
         <div>
             <label>小便(ml)：</label>
@@ -179,27 +178,24 @@
 
     <div class="split"></div>
 
-    <div class="row-item">
-        <div>
-            <label>长度(米)：</label>
-            <input type="number" id="len" placeholder="输入长度">
-        </div>
-        <div>
-            <label>宽度(米)：</label>
-            <input type="number" id="wid" placeholder="输入宽度">
-        </div>
-        <div>
-            <label>墙高(米)：</label>
-            <input type="number" id="height" placeholder="输入墙高">
-        </div>
-    </div>
-
     <div class="item">
-        <label>用量(ml/㎡)：</label>
+        <label>长度(米)：</label>
+        <input type="number" id="len" placeholder="输入长度">
+    </div>
+    <div class="item">
+        <label>宽度(米)：</label>
+        <input type="number" id="wid" placeholder="输入宽度">
+    </div>
+    <div class="item">
+        <label>墙面高度(米)：</label>
+        <input type="number" id="height" placeholder="输入层高">
+    </div>
+    <div class="item">
+        <label>消杀用量(ml/㎡)：</label>
         <input type="number" id="dose" value="200">
     </div>
     <div class="item">
-        <label>原液浓度(%)：</label>
+        <label>84原液浓度(%)：</label>
         <input type="number" id="origConc" value="5">
     </div>
     <div class="item">
@@ -207,27 +203,17 @@
         <input type="number" id="targetEnv" value="500">
     </div>
 
+    <button id="calcBtn" onclick="calcAll()">立即计算</button>
+
+    <div class="res" id="result"></div>
+
     <div class="btn-group">
         <button class="unit-btn unit-active" id="unitML" onclick="setUnit('ml')">毫升(ml)</button>
         <button class="unit-btn" id="unitL" onclick="setUnit('L')">升(L)</button>
     </div>
-
-    <div class="calc-row">
-        <button id="calcBtn" onclick="calcAll()">计算</button>
-        <button id="resetBtn" onclick="resetAll()">重置</button>
-    </div>
-
-    <div class="res" id="result"></div>
+    <button id="resetBtn" onclick="resetAll()">清空重置</button>
 
     <div class="bottom-info">恩施市疾病预防控制中心</div>
-
-    <div class="notice">
-        <strong>注意事项：</strong><br>
-        1.对皮肤和粘膜具有腐蚀性和刺激性。配制和使用时佩戴上口罩、橡胶手套,穿防水围裙。<br>
-        2.不能和其他清洁剂混合使用。与洁厕灵、酒精等混合可能会产生有剧毒的氯气,吸入量过大会导致心跳骤停。<br>
-        3.对金属有一定的腐蚀性，对织物有一定的漂白性。带色衣物要慎用。<br>
-        4.消毒完成后用清水冲洗或擦拭，彻底去掉消毒液的残留部分。
-    </div>
 
 <script>
 let nowUnit = "ml";
@@ -246,18 +232,10 @@ function setUnit(u){
     calcAll();
 }
 
-// 痰液有值自动300，无值默认200，可手动改
 function autoSetDose(){
     let val = parseFloat(document.getElementById('sputum').value) || 0;
-    if(!document.getElementById('dose').dataset.manual){
-        document.getElementById('dose').value = val > 0 ? 300 : 200;
-    }
+    document.getElementById('dose').value = val > 0 ? 300 : 200;
 }
-
-// 标记手动修改消杀用量
-document.getElementById('dose').addEventListener('input', function(){
-    this.dataset.manual = "1";
-});
 
 function setType(t){
     let b1=document.getElementById('btn1');
@@ -271,10 +249,11 @@ function setType(t){
         b2.className="type-btn active";
         document.getElementById('targetEnv').value=500;
     }
+    calcAll();
 }
 
 function formatNum(num){
-    num = Math.max(0, isNaN(num) ? 0 : num);
+    num = isNaN(num) ? 0 : num;
     if(nowUnit === "ml"){
         return num.toFixed(1) + " ml";
     }else{
@@ -284,104 +263,97 @@ function formatNum(num){
 
 function resetAll(){
     document.getElementById('sputum').value = '';
+    document.getElementById('cleanWater').value = '';
     document.getElementById('rubWater').value = '';
-    document.getElementById('cleanGoods').value = '';
-    document.getElementById('stool').value = '';
+    document.getElementById('vomit').value = '';
+    document.getElementById('feces').value = '';
     document.getElementById('urine').value = '';
     document.getElementById('len').value = '';
     document.getElementById('wid').value = '';
     document.getElementById('height').value = '';
-    document.getElementById('dose').value = '200';
-    document.getElementById('dose').removeAttribute('data-manual');
-    document.getElementById('origConc').value = '5';
-    document.getElementById('targetEnv').value = '500';
+    document.getElementById('dose').value = 200;
+    document.getElementById('origConc').value = 5;
+    document.getElementById('targetEnv').value = 500;
+    document.getElementById('result').innerHTML = '';
     setType(2);
     setUnit('ml');
-    document.getElementById('result').innerHTML = '';
 }
 
 function calcAll(){
     let sputumMl = parseFloat(document.getElementById('sputum').value) || 0;
-    let rubWaterL = parseFloat(document.getElementById('rubWater').value) || 0;
-    let cleanGoodsL = parseFloat(document.getElementById('cleanGoods').value) || 0;
-    let stoolL = parseFloat(document.getElementById('stool').value) || 0;
+    let cleanWaterMl = parseFloat(document.getElementById('cleanWater').value) || 0;
+    let rubWaterMl = parseFloat(document.getElementById('rubWater').value) || 0;
+    let vomitMl = parseFloat(document.getElementById('vomit').value) || 0;
+    let fecesMl = parseFloat(document.getElementById('feces').value) || 0;
     let urineMl = parseFloat(document.getElementById('urine').value) || 0;
     let L = parseFloat(document.getElementById('len').value) || 0;
     let W = parseFloat(document.getElementById('wid').value) || 0;
     let H = parseFloat(document.getElementById('height').value) || 0;
-    let perMl = parseFloat(document.getElementById('dose').value) || 0;
+    let perMl = parseFloat(document.getElementById('dose').value) || 200;
     let origPct = parseFloat(document.getElementById('origConc').value) || 5;
     let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 500;
 
     const targetSputum = 20000;
+    const targetClean = 1000;    // 清洁用品浓度1000mg/L
     const targetRubbish = 10000;
-    const targetClean = 1000;
-    const targetStool = 30000;
+    const targetVomit = 10000;
+    const targetFeces = 30000;
     const targetUrine = 10000;
     let origMgL = origPct * 10000;
 
-    // 环境消杀
     let floorArea = L * W;
     let wallArea = 2 * (L + W) * H;
     let totalArea = floorArea + wallArea;
     let envTotalMl = totalArea * perMl;
+    
     let envStock = (targetEnv * envTotalMl) / origMgL;
     let envWater = envTotalMl - envStock;
 
-    // 垃圾消毒
-    let rubStock = (targetRubbish * rubWaterL * 1000) / origMgL;
-    let rubWater = (rubWaterL * 1000) - rubStock;
+    let cleanStock = (targetClean * cleanWaterMl) / origMgL;
+    let cleanNeedWater = cleanWaterMl - cleanStock;
 
-    // 卫生清洁用品
-    let cleanStock = (targetClean * cleanGoodsL * 1000) / origMgL;
-    let cleanWater = (cleanGoodsL * 1000) - cleanStock;
-
-    // 大便/呕吐物（单位L，总量×5倍）
-    let stoolTotalMl = stoolL * 1000 * 5;
-    let stoolStock = (targetStool * stoolTotalMl) / origMgL;
-    let stoolWater = stoolTotalMl - stoolStock;
-
-    // 小便消毒
-    let urineTotalMl = urineMl * 10;
-    let urineStock = (targetUrine * urineTotalMl) / origMgL;
-    let urineWater = urineTotalMl - urineStock;
-
-    // 痰液消毒
-    let spuTotalMl = sputumMl * 2;
-    let spuStock = (targetSputum * spuTotalMl) / origMgL;
-    let spuWater = spuTotalMl - spuStock;
+    let rubStock = (targetRubbish * rubWaterMl) / origMgL;
+    let rubNeedWater = rubWaterMl - rubStock;
 
     let html = "";
 
-    if(rubWaterL > 0){
-        html += `<p>【垃圾消毒配比】</p>`;
-        html += `<p>原液：<strong>${formatNum(rubStock)}</strong>，加水：<strong>${formatNum(rubWater)}</strong></p>`;
-        html += `<hr>`;
-    }
-    if(cleanGoodsL > 0){
-        html += `<p>【卫生清洁用品消毒配比】</p>`;
-        html += `<p>原液：<strong>${formatNum(cleanStock)}</strong>，加水：<strong>${formatNum(cleanWater)}</strong></p>`;
-        html += `<hr>`;
-    }
     if(sputumMl > 0){
-        html += `<p>【痰液消毒配比】</p>`;
-        html += `<p>原液：<strong>${formatNum(spuStock)}</strong>，加水：<strong>${formatNum(spuWater)}</strong></p>`;
-        html += `<hr>`;
-    }
-    if(stoolL > 0){
-        html += `<p>【大便、呕吐物消毒配比】</p>`;
-        html += `<p>原液：<strong>${formatNum(stoolStock)}</strong>，加水：<strong>${formatNum(stoolWater)}</strong></p>`;
-        html += `<hr>`;
-    }
-    if(urineMl > 0){
-        html += `<p>【小便消毒配比】</p>`;
-        html += `<p>原液：<strong>${formatNum(urineStock)}</strong>，加水：<strong>${formatNum(urineWater)}</strong></p>`;
-        html += `<hr>`;
+        let spuTotalMl = sputumMl * 2;
+        let spuStock = (targetSputum * spuTotalMl) / origMgL;
+        let spuWater = spuTotalMl - spuStock;
+        html += `<p>【痰液消毒配比】原液：<strong>${formatNum(spuStock)}</strong>；加水：<strong>${formatNum(spuWater)}</strong></p>`;
     }
 
-    html += `<p>【环境消杀配比】</p>`;
-    html += `<p>总面积：<strong>${totalArea.toFixed(2)} ㎡</strong></p>`;
-    html += `<p>原液：<strong>${formatNum(envStock)}</strong>，加水：<strong>${formatNum(envWater)}</strong></p>`;
+    if(cleanWaterMl > 0){
+        html += `<p>【清洁用品消毒配比】原液：<strong>${formatNum(cleanStock)}</strong>；加水：<strong>${formatNum(cleanNeedWater)}</strong></p>`;
+    }
+
+    if(rubWaterMl > 0){
+        html += `<p>【垃圾消毒配比】原液：<strong>${formatNum(rubStock)}</strong>；加水：<strong>${formatNum(rubNeedWater)}</strong></p>`;
+    }
+
+    if(vomitMl > 0){
+        let vomitTotal = vomitMl * 1;
+        let vomitStock = (targetVomit * vomitTotal) / origMgL;
+        let vomitWater = vomitTotal - vomitStock;
+        html += `<p>【呕吐物消毒配比】原液：<strong>${formatNum(vomitStock)}</strong>；加水：<strong>${formatNum(vomitWater)}</strong></p>`;
+    }
+
+    if(fecesMl > 0){
+        let fecesTotal = fecesMl * 5;
+        let fecesStock = (targetFeces * fecesTotal) / origMgL;
+        let fecesWater = fecesTotal - fecesStock;
+        html += `<p>【大便消毒配比】原液：<strong>${formatNum(fecesStock)}</strong>；加水：<strong>${formatNum(fecesWater)}</strong></p>`;
+    }
+
+    if(urineMl > 0){
+        let urineTotal = urineMl * 10;
+        let urineStock = (targetUrine * urineTotal) / origMgL;
+        let urineWater = urineTotal - urineStock;
+        html += `<p>【小便消毒配比】原液：<strong>${formatNum(urineStock)}</strong>；加水：<strong>${formatNum(urineWater)}</strong></p>`;
+    }
+
+    html += `<p>【环境消杀配比】总面积：${totalArea.toFixed(2)}㎡，原液：<strong>${formatNum(envStock)}</strong>；加水：<strong>${formatNum(envWater)}</strong></p>`;
 
     document.getElementById('result').innerHTML = html;
 }
