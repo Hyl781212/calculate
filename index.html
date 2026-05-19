@@ -81,27 +81,26 @@
             background:#005a9c;
             color:#fff;
         }
-        #calcBtn {
-            width: 100%;
+        .calc-row{
+            display:flex;
+            gap:10px;
+            margin:15px 0;
+        }
+        #calcBtn, #resetBtn {
+            flex:1;
             padding: 11px;
+            border: none;
+            border-radius: 4px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+        #calcBtn {
             background: #005a9c;
             color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 17px;
-            cursor: pointer;
-            margin: 15px 0;
         }
         #resetBtn {
-            width: 100%;
-            padding: 11px;
             background: #dc3545;
             color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 17px;
-            cursor: pointer;
-            margin: 15px 0;
         }
         .res {
             margin-top: 15px;
@@ -114,6 +113,10 @@
         strong {
             color: #c00000;
             font-weight: bold;
+        }
+        .blue-title{
+            color:#005a9c;
+            font-weight:bold;
         }
         .split{
             margin:20px 0;height:1px;background:#ccc;
@@ -149,19 +152,19 @@
             <input type="number" id="sputum" placeholder="输入痰液量" oninput="autoSetDose()">
         </div>
         <div>
-            <label>清洁用品(ml)：</label>
-            <input type="number" id="cleanWater" placeholder="输入消毒液总量">
+            <label>清洁用品(L)：</label>
+            <input type="number" id="cleanWater" placeholder="输入消毒液量">
         </div>
     </div>
 
     <div class="row-item">
         <div>
-            <label>垃圾(ml)：</label>
-            <input type="number" id="rubWater" placeholder="输入消毒液总量">
+            <label>垃圾(L)：</label>
+            <input type="number" id="rubWater" placeholder="输入消毒液量">
         </div>
         <div>
             <label>呕吐物(ml)：</label>
-            <input type="number" id="vomit" placeholder="输入呕吐物的量">
+            <input type="number" id="vomit" placeholder="输入呕吐物量">
         </div>
     </div>
 
@@ -176,34 +179,65 @@
         </div>
     </div>
 
+    <div class="row-item">
+        <div>
+            <label>污水(L)：</label>
+            <input type="number" id="sewage" placeholder="输入污水量">
+        </div>
+        <div>
+            <label>织物(L)：</label>
+            <input type="number" id="fabricWater" placeholder="输入消毒液量">
+        </div>
+    </div>
+
+    <div class="row-item">
+        <div>
+            <label>餐具(L)：</label>
+            <input type="number" id="tablewareWater" placeholder="输入消毒液量">
+        </div>
+        <div>
+            <label>遗体(L)：</label>
+            <input type="number" id="bodyWater" placeholder="输入消毒液量">
+        </div>
+    </div>
+
     <div class="split"></div>
 
-    <div class="item">
-        <label>长度(米)：</label>
-        <input type="number" id="len" placeholder="输入长度">
+    <div class="row-item">
+        <div>
+            <label>长度(米)：</label>
+            <input type="number" id="len" placeholder="输入长度">
+        </div>
+        <div>
+            <label>宽度(米)：</label>
+            <input type="number" id="wid" placeholder="输入宽度">
+        </div>
     </div>
-    <div class="item">
-        <label>宽度(米)：</label>
-        <input type="number" id="wid" placeholder="输入宽度">
+    <div class="row-item">
+        <div>
+            <label>墙高(米)：</label>
+            <input type="number" id="height" placeholder="输入墙高">
+        </div>
+        <div>
+            <label>用量(ml/㎡)：</label>
+            <input type="number" id="dose" value="200">
+        </div>
     </div>
-    <div class="item">
-        <label>墙面高度(米)：</label>
-        <input type="number" id="height" placeholder="输入层高">
-    </div>
-    <div class="item">
-        <label>消杀用量(ml/㎡)：</label>
-        <input type="number" id="dose" value="200">
-    </div>
-    <div class="item">
-        <label>84原液浓度(%)：</label>
-        <input type="number" id="origConc" value="5">
-    </div>
-    <div class="item">
-        <label>目标浓度(mg/L)：</label>
-        <input type="number" id="targetEnv" value="500">
+    <div class="row-item">
+        <div>
+            <label>原液浓度(%)：</label>
+            <input type="number" id="origConc" value="5">
+        </div>
+        <div>
+            <label>目标浓度(mg/L)：</label>
+            <input type="number" id="targetEnv" value="500">
+        </div>
     </div>
 
-    <button id="calcBtn" onclick="calcAll()">立即计算</button>
+    <div class="calc-row">
+        <button id="calcBtn" onclick="calcAll()">计算</button>
+        <button id="resetBtn" onclick="resetAll()">重置</button>
+    </div>
 
     <div class="res" id="result"></div>
 
@@ -211,7 +245,6 @@
         <button class="unit-btn unit-active" id="unitML" onclick="setUnit('ml')">毫升(ml)</button>
         <button class="unit-btn" id="unitL" onclick="setUnit('L')">升(L)</button>
     </div>
-    <button id="resetBtn" onclick="resetAll()">清空重置</button>
 
     <div class="bottom-info">恩施市疾病预防控制中心</div>
 
@@ -268,6 +301,10 @@ function resetAll(){
     document.getElementById('vomit').value = '';
     document.getElementById('feces').value = '';
     document.getElementById('urine').value = '';
+    document.getElementById('sewage').value = '';
+    document.getElementById('fabricWater').value = '';
+    document.getElementById('tablewareWater').value = '';
+    document.getElementById('bodyWater').value = '';
     document.getElementById('len').value = '';
     document.getElementById('wid').value = '';
     document.getElementById('height').value = '';
@@ -281,11 +318,16 @@ function resetAll(){
 
 function calcAll(){
     let sputumMl = parseFloat(document.getElementById('sputum').value) || 0;
-    let cleanWaterMl = parseFloat(document.getElementById('cleanWater').value) || 0;
-    let rubWaterMl = parseFloat(document.getElementById('rubWater').value) || 0;
+    let cleanWaterL = parseFloat(document.getElementById('cleanWater').value) || 0;
+    let rubWaterL = parseFloat(document.getElementById('rubWater').value) || 0;
     let vomitMl = parseFloat(document.getElementById('vomit').value) || 0;
     let fecesMl = parseFloat(document.getElementById('feces').value) || 0;
     let urineMl = parseFloat(document.getElementById('urine').value) || 0;
+    let sewageL = parseFloat(document.getElementById('sewage').value) || 0;
+    let fabricWaterL = parseFloat(document.getElementById('fabricWater').value) || 0;
+    let tablewareWaterL = parseFloat(document.getElementById('tablewareWater').value) || 0;
+    let bodyWaterL = parseFloat(document.getElementById('bodyWater').value) || 0;
+
     let L = parseFloat(document.getElementById('len').value) || 0;
     let W = parseFloat(document.getElementById('wid').value) || 0;
     let H = parseFloat(document.getElementById('height').value) || 0;
@@ -293,27 +335,79 @@ function calcAll(){
     let origPct = parseFloat(document.getElementById('origConc').value) || 5;
     let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 500;
 
+    // 浓度配置
     const targetSputum = 20000;
-    const targetClean = 1000;    // 清洁用品浓度1000mg/L
-    const targetRubbish = 10000;
-    const targetVomit = 10000;
-    const targetFeces = 30000;
+    const targetClean = 1000;
+    const targetRubbish = 1000;
+    const targetVomit = 20000;
+    const targetFeces = 50000;
     const targetUrine = 10000;
+    const targetSewageHigh = 20000;
+    const targetSewageLow = 100;
+    const targetFabric = 500;
+    const targetTableware = 500;
+    const targetBody = 10000;
     let origMgL = origPct * 10000;
 
+    // 环境
     let floorArea = L * W;
     let wallArea = 2 * (L + W) * H;
     let totalArea = floorArea + wallArea;
     let envTotalMl = totalArea * perMl;
-    
     let envStock = (targetEnv * envTotalMl) / origMgL;
     let envWater = envTotalMl - envStock;
 
+    // 清洁用品：单位L
+    let cleanWaterMl = cleanWaterL * 1000;
     let cleanStock = (targetClean * cleanWaterMl) / origMgL;
     let cleanNeedWater = cleanWaterMl - cleanStock;
 
+    // 垃圾：单位L
+    let rubWaterMl = rubWaterL * 1000;
     let rubStock = (targetRubbish * rubWaterMl) / origMgL;
     let rubNeedWater = rubWaterMl - rubStock;
+
+    // 呕吐物：×1
+    let vomitTotal = vomitMl * 1;
+    let vomitStock = (targetVomit * vomitTotal) / origMgL;
+    let vomitWater = vomitTotal - vomitStock;
+
+    // 大便：×2
+    let fecesTotal = fecesMl * 2;
+    let fecesStock = (targetFeces * fecesTotal) / origMgL;
+    let fecesWater = fecesTotal - fecesStock;
+
+    // 小便：×10
+    let urineTotal = urineMl * 10;
+    let urineStock = (targetUrine * urineTotal) / origMgL;
+    let urineWater = urineTotal - urineStock;
+
+    // 污水特殊逻辑
+    let sewageStock, sewageWater;
+    if(sewageL > 10){
+        sewageStock = sewageL * 100;
+        sewageWater = 0;
+    }else{
+        let sewageTotalL = sewageL * 0.01;
+        let sewageTotalMl = sewageTotalL * 1000;
+        sewageStock = (targetSewageHigh * sewageTotalMl) / origMgL;
+        sewageWater = sewageTotalMl - sewageStock;
+    }
+
+    // 织物：单位L
+    let fabricWaterMl = fabricWaterL * 1000;
+    let fabricStock = (targetFabric * fabricWaterMl) / origMgL;
+    let fabricNeedWater = fabricWaterMl - fabricStock;
+
+    // 餐具：单位L，同垃圾
+    let tablewareWaterMl = tablewareWaterL * 1000;
+    let tablewareStock = (targetTableware * tablewareWaterMl) / origMgL;
+    let tablewareNeedWater = tablewareWaterMl - tablewareStock;
+
+    // 遗体：单位L，同垃圾，浓度10000
+    let bodyWaterMl = bodyWaterL * 1000;
+    let bodyStock = (targetBody * bodyWaterMl) / origMgL;
+    let bodyNeedWater = bodyWaterMl - bodyStock;
 
     let html = "";
 
@@ -321,39 +415,37 @@ function calcAll(){
         let spuTotalMl = sputumMl * 2;
         let spuStock = (targetSputum * spuTotalMl) / origMgL;
         let spuWater = spuTotalMl - spuStock;
-        html += `<p>【痰液消毒配比】原液：<strong>${formatNum(spuStock)}</strong>；加水：<strong>${formatNum(spuWater)}</strong></p>`;
+        html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${formatNum(spuStock)}</strong>；加水 <strong>${formatNum(spuWater)}</strong>；浸泡，2h。</p>`;
     }
-
-    if(cleanWaterMl > 0){
-        html += `<p>【清洁用品消毒配比】原液：<strong>${formatNum(cleanStock)}</strong>；加水：<strong>${formatNum(cleanNeedWater)}</strong></p>`;
+    if(cleanWaterL > 0){
+        html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${formatNum(cleanStock)}</strong>；加水 <strong>${formatNum(cleanNeedWater)}</strong>；浸泡，30min。</p>`;
     }
-
-    if(rubWaterMl > 0){
-        html += `<p>【垃圾消毒配比】原液：<strong>${formatNum(rubStock)}</strong>；加水：<strong>${formatNum(rubNeedWater)}</strong></p>`;
+    if(rubWaterL > 0){
+        html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${formatNum(rubStock)}</strong>；加水 <strong>${formatNum(rubNeedWater)}</strong>；喷洒，1h。</p>`;
     }
-
     if(vomitMl > 0){
-        let vomitTotal = vomitMl * 1;
-        let vomitStock = (targetVomit * vomitTotal) / origMgL;
-        let vomitWater = vomitTotal - vomitStock;
-        html += `<p>【呕吐物消毒配比】原液：<strong>${formatNum(vomitStock)}</strong>；加水：<strong>${formatNum(vomitWater)}</strong></p>`;
+        html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${formatNum(vomitStock)}</strong>；加水 <strong>${formatNum(vomitWater)}</strong>；搅匀放置，2h。</p>`;
     }
-
     if(fecesMl > 0){
-        let fecesTotal = fecesMl * 5;
-        let fecesStock = (targetFeces * fecesTotal) / origMgL;
-        let fecesWater = fecesTotal - fecesStock;
-        html += `<p>【大便消毒配比】原液：<strong>${formatNum(fecesStock)}</strong>；加水：<strong>${formatNum(fecesWater)}</strong></p>`;
+        html += `<p><span class="blue-title">【大便消毒】</span>原液 <strong>${formatNum(fecesStock)}</strong>；加水 <strong>${formatNum(fecesWater)}</strong>；搅匀放置，2h。</p>`;
     }
-
     if(urineMl > 0){
-        let urineTotal = urineMl * 10;
-        let urineStock = (targetUrine * urineTotal) / origMgL;
-        let urineWater = urineTotal - urineStock;
-        html += `<p>【小便消毒配比】原液：<strong>${formatNum(urineStock)}</strong>；加水：<strong>${formatNum(urineWater)}</strong></p>`;
+        html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${formatNum(urineStock)}</strong>；加水 <strong>${formatNum(urineWater)}</strong>；搅匀放置，2h。</p>`;
+    }
+    if(sewageL > 0){
+        html += `<p><span class="blue-title">【污水消毒】</span>原液 <strong>${formatNum(sewageStock)}</strong>；加水 <strong>${formatNum(sewageWater)}</strong>；搅匀放置，2h。</p>`;
+    }
+    if(fabricWaterL > 0){
+        html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，30min。</p>`;
+    }
+    if(tablewareWaterL > 0){
+        html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${formatNum(tablewareStock)}</strong>；加水 <strong>${formatNum(tablewareNeedWater)}</strong>；浸泡，30min。</p>`;
+    }
+    if(bodyWaterL > 0){
+        html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${formatNum(bodyStock)}</strong>；加水 <strong>${formatNum(bodyNeedWater)}</strong>；用布巾包裹。</p>`;
     }
 
-    html += `<p>【环境消杀配比】总面积：${totalArea.toFixed(2)}㎡，原液：<strong>${formatNum(envStock)}</strong>；加水：<strong>${formatNum(envWater)}</strong></p>`;
+    html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(2)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；喷洒，60min。</p>`;
 
     document.getElementById('result').innerHTML = html;
 }
