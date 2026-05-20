@@ -5,94 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>84消毒液配比计算器</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: "Microsoft Yahei",微软雅黑;
+            font-family: "Microsoft Yahei", 微软雅黑;
             max-width: 480px;
-            margin: 40px auto;
+            margin: 30px auto;
             padding: 25px;
             background: #fff;
             border: 1px solid #dce4ee;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
         }
         h3 {
             text-align: center;
             color: #005a9c;
-            font-size: 20px;
-            margin-bottom: 25px;
-            margin-top:0;
+            font-size: 22px;
+            margin-bottom: 22px;
+            margin-top: 0;
         }
         .row-item{
-            display:flex;
-            gap:15px;
-            margin:14px 0;
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+            align-items: center;
         }
         .item {
-            margin: 14px 0;
+            margin: 12px 0;
         }
         label {
-            display:inline-block;
+            display: inline-block;
             width: 160px;
             color: #333;
             font-weight: 500;
         }
         .row-item label{
-            width:110px;
+            width: 110px;
+            flex-shrink: 0;
         }
         input {
             width: 200px;
-            padding: 9px 10px;
+            padding: 10px 12px;
             font-size: 16px;
             border: 1px solid #b8c8dc;
-            border-radius: 4px;
+            border-radius: 5px;
             outline: none;
+            transition: border 0.2s;
+        }
+        input:focus {
+            border-color: #005a9c;
         }
         .row-item input{
-            width:130px;
+            width: 130px;
         }
         .btn-group{
-            margin:14px 0;
+            margin: 16px 0;
             text-align: center;
         }
         .type-btn{
-            padding:8px 16px;
-            border:none;
-            border-radius:4px;
-            font-size:15px;
-            cursor:pointer;
-            margin:0 8px;
+            padding: 9px 18px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            margin: 0 6px;
+            transition: all 0.2s;
         }
         .type-btn.active{
-            background:#005a9c;
-            color:#fff;
+            background: #005a9c;
+            color: #fff;
         }
         .type-btn.normal{
-            background:#e8edf5;
-            color:#333;
+            background: #e8edf5;
+            color: #333;
         }
         .unit-btn{
-            padding:6px 14px;
-            border:none;
-            border-radius:3px;
-            cursor:pointer;
-            margin:0 5px;
-        }
-        .unit-active{
-            background:#005a9c;
-            color:#fff;
-        }
-        .calc-row{
-            display:flex;
-            gap:10px;
-            margin:15px 0;
-        }
-        #calcBtn, #resetBtn {
-            flex:1;
-            padding: 11px;
+            padding: 7px 15px;
             border: none;
             border-radius: 4px;
+            cursor: pointer;
+            margin: 0 6px;
+        }
+        .unit-active{
+            background: #005a9c;
+            color: #fff;
+        }
+        .calc-row{
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        #calcBtn, #resetBtn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
             font-size: 17px;
             cursor: pointer;
+            font-weight: 500;
         }
         #calcBtn {
             background: #005a9c;
@@ -103,38 +114,37 @@
             color: #fff;
         }
         .res {
-            margin-top: 15px;
+            margin-top: 20px;
             padding: 20px;
             background: #f7fafe;
-            border-radius: 6px;
-            font-size: 18px;
-            line-height: 2.2;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 2;
+        }
+        .res p {
+            margin: 8px 0;
         }
         strong {
             color: #c00000;
             font-weight: bold;
         }
         .blue-title{
-            color:#005a9c;
-            font-weight:bold;
+            color: #005a9c;
+            font-weight: bold;
         }
         .split{
-            margin:20px 0;height:1px;background:#ccc;
+            margin: 22px 0;
+            height: 1px;
+            background: #eee;
         }
         .bottom-info{
-            margin-top: 30px;
+            margin-top: 25px;
             text-align: center;
             color: #005a9c;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             padding-top: 15px;
             border-top: 1px dashed #eee;
-        }
-        hr {
-            border: none;
-            height: 1px;
-            background-color: #dce4ee;
-            margin: 10px 0;
         }
     </style>
 </head>
@@ -251,63 +261,57 @@
 <script>
 let nowUnit = "ml";
 
-function setUnit(u){
+function setUnit(u) {
     nowUnit = u;
     let mlBtn = document.getElementById('unitML');
     let lBtn = document.getElementById('unitL');
-    if(u === 'ml'){
+    if (u === 'ml') {
         mlBtn.className = "unit-btn unit-active";
         lBtn.className = "unit-btn";
-    }else{
+    } else {
         mlBtn.className = "unit-btn";
         lBtn.className = "unit-btn unit-active";
     }
     calcAll();
 }
 
-function autoSetDose(){
+function autoSetDose() {
     let val = parseFloat(document.getElementById('sputum').value) || 0;
     document.getElementById('dose').value = val > 0 ? 300 : 200;
 }
 
-function setType(t){
-    let b1=document.getElementById('btn1');
-    let b2=document.getElementById('btn2');
-    if(t===1){
-        b1.className="type-btn active";
-        b2.className="type-btn normal";
-        document.getElementById('targetEnv').value=1000;
-    }else{
-        b1.className="type-btn normal";
-        b2.className="type-btn active";
-        document.getElementById('targetEnv').value=500;
+function setType(t) {
+    let b1 = document.getElementById('btn1');
+    let b2 = document.getElementById('btn2');
+    if (t === 1) {
+        b1.className = "type-btn active";
+        b2.className = "type-btn normal";
+        document.getElementById('targetEnv').value = 1000;
+    } else {
+        b1.className = "type-btn normal";
+        b2.className = "type-btn active";
+        document.getElementById('targetEnv').value = 500;
     }
     calcAll();
 }
 
-function formatNum(num){
-    num = isNaN(num) ? 0 : num;
-    if(nowUnit === "ml"){
-        return num.toFixed(1) + " ml";
-    }else{
-        return (num / 1000).toFixed(3) + " L";
+// 统一保留1位小数
+function formatNum(num) {
+    num = parseFloat(num) || 0;
+    num = Number(num.toFixed(1));
+    if (nowUnit === "ml") {
+        return num + " ml";
+    } else {
+        let liter = (num / 1000).toFixed(1);
+        return liter + " L";
     }
 }
 
-function resetAll(){
-    document.getElementById('sputum').value = '';
-    document.getElementById('cleanWater').value = '';
-    document.getElementById('rubWater').value = '';
-    document.getElementById('vomit').value = '';
-    document.getElementById('feces').value = '';
-    document.getElementById('urine').value = '';
-    document.getElementById('sewage').value = '';
-    document.getElementById('fabricWater').value = '';
-    document.getElementById('tablewareWater').value = '';
-    document.getElementById('bodyWater').value = '';
-    document.getElementById('len').value = '';
-    document.getElementById('wid').value = '';
-    document.getElementById('height').value = '';
+function resetAll() {
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.value = '';
+    });
     document.getElementById('dose').value = 200;
     document.getElementById('origConc').value = 5;
     document.getElementById('targetEnv').value = 500;
@@ -316,7 +320,7 @@ function resetAll(){
     setUnit('ml');
 }
 
-function calcAll(){
+function calcAll() {
     let sputumMl = parseFloat(document.getElementById('sputum').value) || 0;
     let cleanWaterL = parseFloat(document.getElementById('cleanWater').value) || 0;
     let rubWaterL = parseFloat(document.getElementById('rubWater').value) || 0;
@@ -335,21 +339,17 @@ function calcAll(){
     let origPct = parseFloat(document.getElementById('origConc').value) || 5;
     let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 500;
 
-    // 浓度配置
     const targetSputum = 20000;
     const targetClean = 1000;
     const targetRubbish = 1000;
     const targetVomit = 20000;
     const targetFeces = 50000;
     const targetUrine = 10000;
-    const targetSewageHigh = 20000;
-    const targetSewageLow = 100;
     const targetFabric = 500;
     const targetTableware = 500;
     const targetBody = 10000;
     let origMgL = origPct * 10000;
 
-    // 环境
     let floorArea = L * W;
     let wallArea = 2 * (L + W) * H;
     let totalArea = floorArea + wallArea;
@@ -357,95 +357,129 @@ function calcAll(){
     let envStock = (targetEnv * envTotalMl) / origMgL;
     let envWater = envTotalMl - envStock;
 
-    // 清洁用品：单位L
     let cleanWaterMl = cleanWaterL * 1000;
     let cleanStock = (targetClean * cleanWaterMl) / origMgL;
     let cleanNeedWater = cleanWaterMl - cleanStock;
 
-    // 垃圾：单位L
     let rubWaterMl = rubWaterL * 1000;
     let rubStock = (targetRubbish * rubWaterMl) / origMgL;
     let rubNeedWater = rubWaterMl - rubStock;
 
-    // 呕吐物：×1
     let vomitTotal = vomitMl * 1;
     let vomitStock = (targetVomit * vomitTotal) / origMgL;
     let vomitWater = vomitTotal - vomitStock;
 
-    // 大便：×2
     let fecesTotal = fecesMl * 2;
     let fecesStock = (targetFeces * fecesTotal) / origMgL;
     let fecesWater = fecesTotal - fecesStock;
 
-    // 小便：×10
     let urineTotal = urineMl * 10;
     let urineStock = (targetUrine * urineTotal) / origMgL;
     let urineWater = urineTotal - urineStock;
 
-    // 污水特殊逻辑
-    let sewageStock, sewageWater;
-    if(sewageL > 10){
-        sewageStock = sewageL * 100;
-        sewageWater = 0;
-    }else{
-        let sewageTotalL = sewageL * 0.01;
-        let sewageTotalMl = sewageTotalL * 1000;
-        sewageStock = (targetSewageHigh * sewageTotalMl) / origMgL;
-        sewageWater = sewageTotalMl - sewageStock;
+    let sewageStock = 0;
+    if (sewageL > 0) {
+        let coe = sewageL <= 100 ? 200 : 100;
+        sewageStock = coe * sewageL / origPct;
     }
 
-    // 织物：单位L
     let fabricWaterMl = fabricWaterL * 1000;
     let fabricStock = (targetFabric * fabricWaterMl) / origMgL;
     let fabricNeedWater = fabricWaterMl - fabricStock;
 
-    // 餐具：单位L，同垃圾
     let tablewareWaterMl = tablewareWaterL * 1000;
     let tablewareStock = (targetTableware * tablewareWaterMl) / origMgL;
     let tablewareNeedWater = tablewareWaterMl - tablewareStock;
 
-    // 遗体：单位L，同垃圾，浓度10000
     let bodyWaterMl = bodyWaterL * 1000;
     let bodyStock = (targetBody * bodyWaterMl) / origMgL;
     let bodyNeedWater = bodyWaterMl - bodyStock;
 
     let html = "";
 
-    if(sputumMl > 0){
+    // 痰液
+    if (sputumMl > 0) {
         let spuTotalMl = sputumMl * 2;
         let spuStock = (targetSputum * spuTotalMl) / origMgL;
         let spuWater = spuTotalMl - spuStock;
-        html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${formatNum(spuStock)}</strong>；加水 <strong>${formatNum(spuWater)}</strong>；浸泡，2h。</p>`;
+        if (spuWater < 0) {
+            html += `<p><span class="blue-title">【痰液消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${formatNum(spuStock)}</strong>；加水 <strong>${formatNum(spuWater)}</strong>；浸泡，2h。</p>`;
+        }
     }
-    if(cleanWaterL > 0){
-        html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${formatNum(cleanStock)}</strong>；加水 <strong>${formatNum(cleanNeedWater)}</strong>；浸泡，30min。</p>`;
+    // 清洁用品
+    if (cleanWaterL > 0) {
+        if (cleanNeedWater < 0) {
+            html += `<p><span class="blue-title">【清洁用品消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${formatNum(cleanStock)}</strong>；加水 <strong>${formatNum(cleanNeedWater)}</strong>；浸泡，30min。</p>`;
+        }
     }
-    if(rubWaterL > 0){
-        html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${formatNum(rubStock)}</strong>；加水 <strong>${formatNum(rubNeedWater)}</strong>；喷洒，1h。</p>`;
+    // 垃圾
+    if (rubWaterL > 0) {
+        if (rubNeedWater < 0) {
+            html += `<p><span class="blue-title">【垃圾消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${formatNum(rubStock)}</strong>；加水 <strong>${formatNum(rubNeedWater)}</strong>；喷洒，1h。</p>`;
+        }
     }
-    if(vomitMl > 0){
-        html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${formatNum(vomitStock)}</strong>；加水 <strong>${formatNum(vomitWater)}</strong>；搅匀放置，2h。</p>`;
+    // 呕吐物
+    if (vomitMl > 0) {
+        if (vomitWater < 0) {
+            html += `<p><span class="blue-title">【呕吐物消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${formatNum(vomitStock)}</strong>；加水 <strong>${formatNum(vomitWater)}</strong>；搅匀放置，2h。</p>`;
+        }
     }
-    if(fecesMl > 0){
-        html += `<p><span class="blue-title">【大便消毒】</span>原液 <strong>${formatNum(fecesStock)}</strong>；加水 <strong>${formatNum(fecesWater)}</strong>；搅匀放置，2h。</p>`;
+    // 大便消毒
+    if (fecesMl > 0) {
+        html += `<p><span class="blue-title">【大便消毒】</span>加入原液<strong>${formatNum(fecesStock)}</strong>，搅匀放置，2h。</p>`;
     }
-    if(urineMl > 0){
-        html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${formatNum(urineStock)}</strong>；加水 <strong>${formatNum(urineWater)}</strong>；搅匀放置，2h。</p>`;
+    // 小便
+    if (urineMl > 0) {
+        if (urineWater < 0) {
+            html += `<p><span class="blue-title">【小便消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${formatNum(urineStock)}</strong>；加水 <strong>${formatNum(urineWater)}</strong>；搅匀放置，2h。</p>`;
+        }
     }
-    if(sewageL > 0){
-        html += `<p><span class="blue-title">【污水消毒】</span>原液 <strong>${formatNum(sewageStock)}</strong>；加水 <strong>${formatNum(sewageWater)}</strong>；搅匀放置，2h。</p>`;
+    // 污水
+    if (sewageL > 0) {
+        html += `<p><span class="blue-title">【污水消毒】</span>加入原液<strong>${formatNum(sewageStock)}</strong>，搅匀放置，1-2h。</p>`;
     }
-    if(fabricWaterL > 0){
-        html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，30min。</p>`;
+    // 织物
+    if (fabricWaterL > 0) {
+        if (fabricNeedWater < 0) {
+            html += `<p><span class="blue-title">【织物消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，30min。</p>`;
+        }
     }
-    if(tablewareWaterL > 0){
-        html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${formatNum(tablewareStock)}</strong>；加水 <strong>${formatNum(tablewareNeedWater)}</strong>；浸泡，30min。</p>`;
+    // 餐具
+    if (tablewareWaterL > 0) {
+        if (tablewareNeedWater < 0) {
+            html += `<p><span class="blue-title">【餐具消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${formatNum(tablewareStock)}</strong>；加水 <strong>${formatNum(tablewareNeedWater)}</strong>；浸泡，30min。</p>`;
+        }
     }
-    if(bodyWaterL > 0){
-        html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${formatNum(bodyStock)}</strong>；加水 <strong>${formatNum(bodyNeedWater)}</strong>；用布巾包裹。</p>`;
+    // 遗体
+    if (bodyWaterL > 0) {
+        if (bodyNeedWater < 0) {
+            html += `<p><span class="blue-title">【遗体消毒】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${formatNum(bodyStock)}</strong>；加水 <strong>${formatNum(bodyNeedWater)}</strong>；用布巾包裹。</p>`;
+        }
     }
-
-    html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(2)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；喷洒，60min。</p>`;
+    // 环境
+    if (totalArea > 0) {
+        if (envWater < 0) {
+            html += `<p><span class="blue-title">【环境消杀】</span><strong>84 原液浓度不够</strong></p>`;
+        } else {
+            html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(1)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；喷洒，60min。</p>`;
+        }
+    }
 
     document.getElementById('result').innerHTML = html;
 }
