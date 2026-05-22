@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>84消毒液配比计算器</title>
+    <title>传染病消毒剂配制计算器</title>
     <style>
         * {
             box-sizing: border-box;
@@ -22,8 +22,34 @@
             text-align: center;
             color: #005a9c;
             font-size: 22px;
-            margin-bottom: 22px;
+            margin-bottom: 8px;
             margin-top: 0;
+        }
+        .drug-name{
+            text-align: center;
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 22px;
+        }
+        .split-wrap{
+            position: relative;
+            margin: 25px 0;
+        }
+        .split{
+            height: 2px;
+            background: #005a9c;
+            width: 100%;
+        }
+        .surface-title{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            background: #fff;
+            padding: 0 15px;
+            font-size: 16px;
+            color: #005a9c;
+            font-weight: bold;
         }
         .row-item{
             display: flex;
@@ -59,44 +85,12 @@
         .row-item input{
             width: 130px;
         }
-        .btn-group{
-            margin: 16px 0;
-            text-align: center;
-        }
-        .type-btn{
-            padding: 9px 18px;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            cursor: pointer;
-            margin: 0 6px;
-            transition: all 0.2s;
-        }
-        .type-btn.active{
-            background: #005a9c;
-            color: #fff;
-        }
-        .type-btn.normal{
-            background: #e8edf5;
-            color: #333;
-        }
-        .unit-btn{
-            padding: 7px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 6px;
-        }
-        .unit-active{
-            background: #005a9c;
-            color: #fff;
-        }
         .calc-row{
             display: flex;
             gap: 12px;
             margin: 20px 0;
         }
-        #calcBtn, #resetBtn {
+        #calcBtn, #resetBtn, #unitSwitchBtn {
             flex: 1;
             padding: 12px;
             border: none;
@@ -111,6 +105,10 @@
         }
         #resetBtn {
             background: #dc3545;
+            color: #fff;
+        }
+        #unitSwitchBtn{
+            background: #28a745;
             color: #fff;
         }
         .res {
@@ -132,11 +130,6 @@
             color: #005a9c;
             font-weight: bold;
         }
-        .split{
-            margin: 22px 0;
-            height: 1px;
-            background: #eee;
-        }
         .bottom-info{
             margin-top: 25px;
             text-align: center;
@@ -149,12 +142,8 @@
     </style>
 </head>
 <body>
-    <h3>84消毒液配比计算器</h3>
-
-    <div class="btn-group">
-        <button class="type-btn active" id="btn2" onclick="setType(2)">预防性消毒</button>
-        <button class="type-btn normal" id="btn1" onclick="setType(1)">疫源地消毒</button>
-    </div>
+    <h3>传染病消毒剂配制计算器</h3>
+    <div class="drug-name">消毒剂名称：次氯酸钠（俗称84）</div>
 
     <div class="row-item">
         <div>
@@ -211,7 +200,10 @@
         </div>
     </div>
 
-    <div class="split"></div>
+    <div class="split-wrap">
+        <div class="split"></div>
+        <div class="surface-title">环境表面、物表消毒</div>
+    </div>
 
     <div class="row-item">
         <div>
@@ -236,74 +228,44 @@
     <div class="row-item">
         <div>
             <label>原液浓度(%)：</label>
-            <input type="number" id="origConc" value="5">
+            <input type="number" id="origConc" value="5" min="0.1" step="0.1">
         </div>
         <div>
             <label>目标浓度(mg/L)：</label>
-            <input type="number" id="targetEnv" value="500">
+            <input type="number" id="targetEnv" value="1000" min="100">
         </div>
     </div>
 
     <div class="calc-row">
         <button id="calcBtn" onclick="calcAll()">计算</button>
         <button id="resetBtn" onclick="resetAll()">重置</button>
+        <button id="unitSwitchBtn" onclick="switchUnit()">ml/L单位转换</button>
     </div>
 
     <div class="res" id="result"></div>
 
-    <div class="btn-group">
-        <button class="unit-btn unit-active" id="unitML" onclick="setUnit('ml')">毫升(ml)</button>
-        <button class="unit-btn" id="unitL" onclick="setUnit('L')">升(L)</button>
-    </div>
-
     <div class="bottom-info">恩施市疾病预防控制中心</div>
 
 <script>
-let nowUnit = "ml";
-
-function setUnit(u) {
-    nowUnit = u;
-    let mlBtn = document.getElementById('unitML');
-    let lBtn = document.getElementById('unitL');
-    if (u === 'ml') {
-        mlBtn.className = "unit-btn unit-active";
-        lBtn.className = "unit-btn";
-    } else {
-        mlBtn.className = "unit-btn";
-        lBtn.className = "unit-btn unit-active";
-    }
-    calcAll();
-}
+let useMLUnit = true;
 
 function autoSetDose() {
     let val = parseFloat(document.getElementById('sputum').value) || 0;
     document.getElementById('dose').value = val > 0 ? 300 : 200;
 }
 
-function setType(t) {
-    let b1 = document.getElementById('btn1');
-    let b2 = document.getElementById('btn2');
-    if (t === 1) {
-        b1.className = "type-btn active";
-        b2.className = "type-btn normal";
-        document.getElementById('targetEnv').value = 1000;
-    } else {
-        b1.className = "type-btn normal";
-        b2.className = "type-btn active";
-        document.getElementById('targetEnv').value = 500;
-    }
+function switchUnit(){
+    useMLUnit = !useMLUnit;
     calcAll();
 }
 
-// 统一保留1位小数
 function formatNum(num) {
     num = parseFloat(num) || 0;
     num = Number(num.toFixed(1));
-    if (nowUnit === "ml") {
-        return num + " ml";
-    } else {
-        let liter = (num / 1000).toFixed(1);
-        return liter + " L";
+    if(useMLUnit){
+        return num >= 1000 ? (num/1000).toFixed(1) + " L" : num + " ml";
+    }else{
+        return num >= 1000 ? num + " ml" : (num/1000).toFixed(1) + " L";
     }
 }
 
@@ -314,10 +276,8 @@ function resetAll() {
     });
     document.getElementById('dose').value = 200;
     document.getElementById('origConc').value = 5;
-    document.getElementById('targetEnv').value = 500;
+    document.getElementById('targetEnv').value = 1000;
     document.getElementById('result').innerHTML = '';
-    setType(2);
-    setUnit('ml');
 }
 
 function calcAll() {
@@ -337,7 +297,7 @@ function calcAll() {
     let H = parseFloat(document.getElementById('height').value) || 0;
     let perMl = parseFloat(document.getElementById('dose').value) || 200;
     let origPct = parseFloat(document.getElementById('origConc').value) || 5;
-    let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 500;
+    let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 1000;
 
     const targetSputum = 20000;
     const targetClean = 1000;
@@ -354,130 +314,119 @@ function calcAll() {
     let wallArea = 2 * (L + W) * H;
     let totalArea = floorArea + wallArea;
     let envTotalMl = totalArea * perMl;
-    let envStock = (targetEnv * envTotalMl) / origMgL;
+    let envStock = origMgL === 0 ? 0 : (targetEnv * envTotalMl) / origMgL;
     let envWater = envTotalMl - envStock;
 
     let cleanWaterMl = cleanWaterL * 1000;
-    let cleanStock = (targetClean * cleanWaterMl) / origMgL;
+    let cleanStock = origMgL === 0 ? 0 : (targetClean * cleanWaterMl) / origMgL;
     let cleanNeedWater = cleanWaterMl - cleanStock;
 
     let rubWaterMl = rubWaterL * 1000;
-    let rubStock = (targetRubbish * rubWaterMl) / origMgL;
+    let rubStock = origMgL === 0 ? 0 : (targetRubbish * rubWaterMl) / origMgL;
     let rubNeedWater = rubWaterMl - rubStock;
 
     let vomitTotal = vomitMl * 1;
-    let vomitStock = (targetVomit * vomitTotal) / origMgL;
+    let vomitStock = origMgL === 0 ? 0 : (targetVomit * vomitTotal) / origMgL;
     let vomitWater = vomitTotal - vomitStock;
 
     let fecesTotal = fecesMl * 2;
-    let fecesStock = (targetFeces * fecesTotal) / origMgL;
+    let fecesStock = origMgL === 0 ? 0 : (targetFeces * fecesTotal) / origMgL;
     let fecesWater = fecesTotal - fecesStock;
 
     let urineTotal = urineMl * 10;
-    let urineStock = (targetUrine * urineTotal) / origMgL;
+    let urineStock = origMgL === 0 ? 0 : (targetUrine * urineTotal) / origMgL;
     let urineWater = urineTotal - urineStock;
 
     let sewageStock = 0;
-    if (sewageL > 0) {
+    if (sewageL > 0 && origPct > 0) {
         let coe = sewageL <= 100 ? 200 : 100;
         sewageStock = coe * sewageL / origPct;
     }
 
     let fabricWaterMl = fabricWaterL * 1000;
-    let fabricStock = (targetFabric * fabricWaterMl) / origMgL;
+    let fabricStock = origMgL === 0 ? 0 : (targetFabric * fabricWaterMl) / origMgL;
     let fabricNeedWater = fabricWaterMl - fabricStock;
 
     let tablewareWaterMl = tablewareWaterL * 1000;
-    let tablewareStock = (targetTableware * tablewareWaterMl) / origMgL;
+    let tablewareStock = origMgL === 0 ? 0 : (targetTableware * tablewareWaterMl) / origMgL;
     let tablewareNeedWater = tablewareWaterMl - tablewareStock;
 
     let bodyWaterMl = bodyWaterL * 1000;
-    let bodyStock = (targetBody * bodyWaterMl) / origMgL;
+    let bodyStock = origMgL === 0 ? 0 : (targetBody * bodyWaterMl) / origMgL;
     let bodyNeedWater = bodyWaterMl - bodyStock;
 
     let html = "";
 
-    // 痰液
     if (sputumMl > 0) {
         let spuTotalMl = sputumMl * 2;
-        let spuStock = (targetSputum * spuTotalMl) / origMgL;
+        let spuStock = origMgL === 0 ? 0 : (targetSputum * spuTotalMl) / origMgL;
         let spuWater = spuTotalMl - spuStock;
         if (spuWater < 0) {
-            html += `<p><span class="blue-title">【痰液消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【痰液消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${formatNum(spuStock)}</strong>；加水 <strong>${formatNum(spuWater)}</strong>；浸泡，2h。</p>`;
+            html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${formatNum(spuStock)}</strong>；加水 <strong>${formatNum(spuWater)}</strong>；浸泡静置，作用时间：2小时</p>`;
         }
     }
-    // 清洁用品
     if (cleanWaterL > 0) {
         if (cleanNeedWater < 0) {
-            html += `<p><span class="blue-title">【清洁用品消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【清洁用品消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${formatNum(cleanStock)}</strong>；加水 <strong>${formatNum(cleanNeedWater)}</strong>；浸泡，30min。</p>`;
+            html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${formatNum(cleanStock)}</strong>；加水 <strong>${formatNum(cleanNeedWater)}</strong>；浸泡，作用时间：30分钟</p>`;
         }
     }
-    // 垃圾
     if (rubWaterL > 0) {
         if (rubNeedWater < 0) {
-            html += `<p><span class="blue-title">【垃圾消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【垃圾消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${formatNum(rubStock)}</strong>；加水 <strong>${formatNum(rubNeedWater)}</strong>；喷洒，1h。</p>`;
+            html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${formatNum(rubStock)}</strong>；加水 <strong>${formatNum(rubNeedWater)}</strong>；滞留喷洒，作用时间：1小时</p>`;
         }
     }
-    // 呕吐物
     if (vomitMl > 0) {
         if (vomitWater < 0) {
-            html += `<p><span class="blue-title">【呕吐物消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【呕吐物消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${formatNum(vomitStock)}</strong>；加水 <strong>${formatNum(vomitWater)}</strong>；搅匀放置，2h。</p>`;
+            html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${formatNum(vomitStock)}</strong>；加水 <strong>${formatNum(vomitWater)}</strong>；搅匀静置，作用时间：2小时</p>`;
         }
     }
-    // 大便消毒
     if (fecesMl > 0) {
-        html += `<p><span class="blue-title">【大便消毒】</span>加入原液<strong>${formatNum(fecesStock)}</strong>，搅匀放置，2h。</p>`;
+        html += `<p><span class="blue-title">【大便消毒】</span>加入原液<strong>${formatNum(fecesStock)}</strong>，搅匀静置，作用时间：2小时</p>`;
     }
-    // 小便
     if (urineMl > 0) {
         if (urineWater < 0) {
-            html += `<p><span class="blue-title">【小便消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【小便消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${formatNum(urineStock)}</strong>；加水 <strong>${formatNum(urineWater)}</strong>；搅匀放置，2h。</p>`;
+            html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${formatNum(urineStock)}</strong>；加水 <strong>${formatNum(urineWater)}</strong>；搅匀静置，作用时间：2小时</p>`;
         }
     }
-    // 污水
     if (sewageL > 0) {
-        html += `<p><span class="blue-title">【污水消毒】</span>加入原液<strong>${formatNum(sewageStock)}</strong>，搅匀放置，1-2h。</p>`;
+        html += `<p><span class="blue-title">【污水消毒】</span>加入原液<strong>${formatNum(sewageStock)}</strong>，搅匀静置，作用时间：1-2小时</p>`;
     }
-    // 织物
     if (fabricWaterL > 0) {
         if (fabricNeedWater < 0) {
-            html += `<p><span class="blue-title">【织物消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【织物消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，30min。</p>`;
+            html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，作用时间：30分钟</p>`;
         }
     }
-    // 餐具
     if (tablewareWaterL > 0) {
         if (tablewareNeedWater < 0) {
-            html += `<p><span class="blue-title">【餐具消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【餐具消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${formatNum(tablewareStock)}</strong>；加水 <strong>${formatNum(tablewareNeedWater)}</strong>；浸泡，30min。</p>`;
+            html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${formatNum(tablewareStock)}</strong>；加水 <strong>${formatNum(tablewareNeedWater)}</strong>；浸泡，作用时间：30分钟</p>`;
         }
     }
-    // 遗体
     if (bodyWaterL > 0) {
         if (bodyNeedWater < 0) {
-            html += `<p><span class="blue-title">【遗体消毒】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【遗体消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${formatNum(bodyStock)}</strong>；加水 <strong>${formatNum(bodyNeedWater)}</strong>；用布巾包裹。</p>`;
+            html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${formatNum(bodyStock)}</strong>；加水 <strong>${formatNum(bodyNeedWater)}</strong>；浸湿布巾包裹消杀</p>`;
         }
     }
-    // 环境
     if (totalArea > 0) {
         if (envWater < 0) {
-            html += `<p><span class="blue-title">【环境消杀】</span><strong>84 原液浓度不够</strong></p>`;
+            html += `<p><span class="blue-title">【环境消杀】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(1)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；喷洒，60min。</p>`;
+            html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(1)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；滞留喷洒密闭，作用时间：60分钟</p>`;
         }
     }
 
