@@ -339,7 +339,7 @@ function calcAll() {
 
     let sewageStock = 0;
     if (sewageL > 0 && origPct > 0) {
-        let coe = sewageL <= 100 ? 200 : 100;
+        let coe = sewageL <= 100 ? 20 : 10;
         sewageStock = coe * sewageL / origPct;
     }
 
