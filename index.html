@@ -133,9 +133,9 @@
         .bottom-info{
             margin-top: 25px;
             text-align: center;
-            color: #005a9c;
-            font-size: 15px;
-            font-weight: bold;
+            color: #668cb3;
+            font-size: 14px;
+            font-weight: normal;
             padding-top: 15px;
             border-top: 1px dashed #eee;
         }
@@ -180,11 +180,11 @@
 
     <div class="row-item">
         <div>
-            <label>污水(L)：</label>
+            <label>生活污水(L)：</label>
             <input type="number" id="sewage" placeholder="输入污水量">
         </div>
         <div>
-            <label>织物(L)：</label>
+            <label>物表(L)：</label>
             <input type="number" id="fabricWater" placeholder="输入消毒液量">
         </div>
     </div>
@@ -202,7 +202,7 @@
 
     <div class="split-wrap">
         <div class="split"></div>
-        <div class="surface-title">环境、物表消毒</div>
+        <div class="surface-title">地面、墙面消毒</div>
     </div>
 
     <div class="row-item">
@@ -305,7 +305,7 @@ function calcAll() {
     const targetVomit = 20000;
     const targetFeces = 50000;
     const targetUrine = 10000;
-    const targetFabric = 500;
+    const targetFabric = 1000;
     const targetTableware = 500;
     const targetBody = 10000;
     let origMgL = origPct * 10000;
@@ -399,13 +399,13 @@ function calcAll() {
         }
     }
     if (sewageL > 0) {
-        html += `<p><span class="blue-title">【污水消毒】</span>加入原液<strong>${formatNum(sewageStock)}</strong>，搅匀静置，作用时间：1-2小时</p>`;
+        html += `<p><span class="blue-title">【生活污水消毒】</span>加入原液<strong>${formatNum(sewageStock)}</strong>，搅匀静置，作用时间：1-2小时</p>`;
     }
     if (fabricWaterL > 0) {
         if (fabricNeedWater < 0) {
-            html += `<p><span class="blue-title">【织物消毒】</span><strong>84 原液浓度不足</strong></p>`;
+            html += `<p><span class="blue-title">【物表消毒】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【织物消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；浸泡，作用时间：30分钟</p>`;
+            html += `<p><span class="blue-title">【物表消毒】</span>原液 <strong>${formatNum(fabricStock)}</strong>；加水 <strong>${formatNum(fabricNeedWater)}</strong>；擦拭/喷洒，作用时间：30分钟</p>`;
         }
     }
     if (tablewareWaterL > 0) {
@@ -424,9 +424,9 @@ function calcAll() {
     }
     if (totalArea > 0) {
         if (envWater < 0) {
-            html += `<p><span class="blue-title">【环境消杀】</span><strong>84 原液浓度不足</strong></p>`;
+            html += `<p><span class="blue-title">【地面墙面消杀】</span><strong>84 原液浓度不足</strong></p>`;
         } else {
-            html += `<p><span class="blue-title">【环境消杀】</span>总面积：${totalArea.toFixed(1)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；滞留喷洒密闭，作用时间：60分钟</p>`;
+            html += `<p><span class="blue-title">【地面墙面消杀】</span>总面积：${totalArea.toFixed(1)}㎡，原液 <strong>${formatNum(envStock)}</strong>；加水 <strong>${formatNum(envWater)}</strong>；滞留喷洒密闭，作用时间：60分钟</p>`;
         }
     }
 
