@@ -30,19 +30,43 @@
             font-size: clamp(18px,4vw,22px);
             margin-bottom: 8px;
         }
-        .drug-name{
-            text-align: center;
+        /* 顶部行 + 同排分隔线 */
+        .header-wrap {
+            position: relative;
+            margin: 8px 0 18px;
+        }
+        .header-row{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4px;
             color: #666;
             font-size: clamp(12px,3vw,14px);
-            margin-bottom: 18px;
+            position: relative;
+            z-index: 2;
+            background: #fff;
+            padding: 0 10px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .divider-line{
+            width: 100%;
+            height: 1px;
+            background-color: #cccccc;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
         }
         .row-item{
             display: flex;
             margin: 10px 0;
             align-items: center;
             flex-wrap: nowrap;
-            gap: 6px;
             width: 100%;
+            gap: 4px;
         }
         .title-label {
             color: #005a9c;
@@ -51,6 +75,7 @@
             width: 80px;
             min-width: 80px;
             white-space: nowrap;
+            margin-right: 4px;
         }
         label {
             display: inline-block;
@@ -58,6 +83,12 @@
             font-weight: 500;
             white-space: nowrap;
             font-size: clamp(12px,3vw,14px);
+        }
+        /* 作用浓度：黑色、同字号，与墙面对齐 */
+        .wall-align-label {
+            color: #000;
+            font-size: clamp(12px,3vw,14px);
+            margin-left: 86px;
         }
         select, input {
             padding: 8px 10px;
@@ -70,33 +101,40 @@
             width: 32%;
             min-width: 120px;
         }
+        /* 消毒对象输入框收窄5个字符 */
         #inputVal{
-            width: 40%;
-            min-width: 140px;
+            width: 28%;
+            min-width: 100px;
         }
+        /* 长度输入框收窄2个字符 */
         #len {
-            width: 28%;
-            min-width: 90px;
-        }
-        #wid{
-            width: 28%;
-            min-width: 90px;
-        }
-        #wallType {
-            width: 28%;
-            min-width: 90px;
-        }
-        #wallDose {
-            width: 28%;
-            min-width: 90px;
-        }
-        #origConc{
-            width: 14%;
-            min-width: 48px;
-        }
-        #targetEnv{
             width: 24%;
-            min-width: 90px;
+            min-width: 80px;
+        }
+        /* 宽度输入框收窄2个字符 */
+        #wid{
+            width: 24%;
+            min-width: 80px;
+        }
+        /* 墙面下拉框收窄1字符 */
+        #wallType {
+            width: 26%;
+            min-width: 85px;
+        }
+        /* 墙面用量输入框收窄3个字符 */
+        #wallDose {
+            width: 22%;
+            min-width: 75px;
+        }
+        /* 原液浓度输入框收窄1字符 */
+        #origConc{
+            width: 55px;
+            min-width: 45px;
+        }
+        /* 作用浓度输入框收窄1字符 */
+        #targetEnv{
+            width: 18%;
+            min-width: 75px;
         }
         .btn-row{
             display: flex;
@@ -128,6 +166,7 @@
         input:focus, select:focus {
             border-color: #005a9c;
         }
+        /* 计算结果字号与消毒对象一致 */
         .res {
             margin-top: 15px;
             padding: 15px;
@@ -160,7 +199,17 @@
 </head>
 <body>
     <h3>传染病消毒剂配制计算器</h3>
-    <div class="drug-name">消毒剂名称：次氯酸钠（俗称84）</div>
+
+    <!-- 信息行与分隔线同排 -->
+    <div class="header-wrap">
+        <div class="divider-line"></div>
+        <div class="header-row">
+            <span>消毒剂名称：次氯酸钠(84)</span>
+            <span> </span>
+            <label>原液浓度(%)</label>
+            <input type="number" id="origConc" value="5" min="0.1" step="0.1">
+        </div>
+    </div>
 
     <div class="row-item">
         <div class="title-label">消毒对象：</div>
@@ -176,6 +225,7 @@
             <option value="sewage">生活污水(L)</option>
             <option value="bodyWater">遗体(L)</option>
         </select>
+        <span>，</span>
         <input type="number" id="inputVal" placeholder="请先选择消毒对象">
     </div>
 
@@ -187,7 +237,7 @@
         <input type="number" id="wid" placeholder="输入米">
     </div>
     <div class="row-item">
-        <label style="width:80px;min-width:80px;"></label>
+        <label class="title-label"></label>
         <label>墙面</label>
         <select id="wallType">
             <option value="none">不消毒</option>
@@ -198,10 +248,9 @@
         <label>，用量</label>
         <input type="text" id="wallDose">
     </div>
+    <!-- 作用浓度向后偏移，与墙面对齐 -->
     <div class="row-item">
-        <label>原液浓度(%)</label>
-        <input type="number" id="origConc" value="5" min="0.1" step="0.1">
-        <label>；作用浓度(mg/L)</label>
+        <label class="wall-align-label">作用浓度(mg/L)</label>
         <input type="number" id="targetEnv" value="1000" min="100" max="99999">
     </div>
 
