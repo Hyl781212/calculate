@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>传染病消毒剂配制计算器</title>
     <style>
         * {
@@ -10,39 +10,46 @@
             margin: 0;
             padding: 0;
         }
+        html,body{
+            overflow-x: hidden;
+        }
         body {
             font-family: "Microsoft Yahei", 微软雅黑;
+            width: 100%;
             max-width: 480px;
-            margin: 30px auto;
-            padding: 25px;
+            margin: 15px auto;
+            padding: 15px;
             background: #fff;
             border: 1px solid #dce4ee;
             border-radius: 10px;
-            box-shadow: 3px 3px 12px rgba(0,0,0,0.08);
+            box-shadow: 3px 3px 12px rgba(0,0,0.08);
         }
         h3 {
             text-align: center;
             color: #005a9c;
-            font-size: 22px;
+            font-size: clamp(18px,4vw,22px);
             margin-bottom: 8px;
-            margin-top: 0;
         }
         .drug-name{
             text-align: center;
             color: #666;
-            font-size: 15px;
-            margin-bottom: 22px;
+            font-size: clamp(12px,3vw,14px);
+            margin-bottom: 18px;
         }
         .row-item{
             display: flex;
-            margin: 12px 0;
+            margin: 10px 0;
             align-items: center;
+            flex-wrap: nowrap;
+            gap: 6px;
+            width: 100%;
         }
         .title-label {
             color: #005a9c;
             font-weight: bold;
-            font-size: 16px;
-            width: 85px;
+            font-size: clamp(12px,3vw,14px);
+            width: 80px;
+            min-width: 80px;
             white-space: nowrap;
         }
         label {
@@ -50,51 +57,59 @@
             color: #333;
             font-weight: 500;
             white-space: nowrap;
+            font-size: clamp(12px,3vw,14px);
         }
         select, input {
-            padding: 10px 12px;
-            font-size: 16px;
+            padding: 8px 10px;
+            font-size: clamp(12px,3vw,14px);
             border: 1px solid #b8c8dc;
             outline: none;
+            flex-shrink: 1;
         }
         #disinfectObj {
-            width: 135px; /* 加宽，完整显示“清洁用品(L)” */
-            margin-right: 8px;
+            width: 32%;
+            min-width: 120px;
         }
         #inputVal{
-            width: 160px;
+            width: 40%;
+            min-width: 140px;
         }
         #len {
-            width: 105px;
-            margin-right: 8px;
+            width: 28%;
+            min-width: 90px;
         }
         #wid{
-            width: 105px;
+            width: 28%;
+            min-width: 90px;
         }
         #wallType {
-            width: 105px;
-            margin-right: 8px;
+            width: 28%;
+            min-width: 90px;
         }
         #wallDose {
-            width: 105px;
+            width: 28%;
+            min-width: 90px;
         }
         #origConc{
-            width: 55px;
+            width: 14%;
+            min-width: 48px;
         }
         #targetEnv{
-            width: 100px;
+            width: 24%;
+            min-width: 90px;
         }
         .btn-row{
             display: flex;
-            gap: 12px;
-            margin: 20px 0;
+            gap: 8px;
+            margin: 18px 0;
+            width: 100%;
         }
         .btn-row button{
             flex:1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
-            font-size: 17px;
+            font-size: clamp(14px,3vw,16px);
             cursor: pointer;
             font-weight: 500;
         }
@@ -114,15 +129,15 @@
             border-color: #005a9c;
         }
         .res {
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 15px;
+            padding: 15px;
             background: #f7fafe;
             border-radius: 8px;
-            font-size: 16px;
-            line-height: 2;
+            font-size: clamp(12px,3vw,14px);
+            line-height: 1.8;
         }
         .res p {
-            margin: 8px 0;
+            margin: 6px 0;
         }
         strong {
             color: #c00000;
@@ -133,12 +148,12 @@
             font-weight: bold;
         }
         .bottom-info{
-            margin-top: 25px;
+            margin-top: 20px;
             text-align: center;
             color: #668cb3;
-            font-size: 14px;
+            font-size: clamp(10px,2.5vw,12px);
             font-weight: normal;
-            padding-top: 15px;
+            padding-top: 12px;
             border-top: 1px dashed #eee;
         }
     </style>
@@ -150,7 +165,7 @@
     <div class="row-item">
         <div class="title-label">消毒对象：</div>
         <select id="disinfectObj">
-            <option value="sputum">痰液(ml)</option>
+            <option value="sputum">痰液(L)</option>
             <option value="fabricWater">物表(L)</option>
             <option value="tablewareWater">餐具(L)</option>
             <option value="cleanWater">清洁用品(L)</option>
@@ -172,12 +187,13 @@
         <input type="number" id="wid" placeholder="输入米">
     </div>
     <div class="row-item">
-        <label style="width:85px;"></label>
+        <label style="width:80px;min-width:80px;"></label>
         <label>墙面</label>
         <select id="wallType">
             <option value="none">不消毒</option>
             <option value="soil">泥土</option>
-            <option value="other">其他</option>
+            <option value="other">水泥、木板、石灰</option>
+            <option value="tile">瓷砖</option>
         </select>
         <label>，用量</label>
         <input type="text" id="wallDose">
@@ -201,10 +217,24 @@
 
 <script>
 let useAutoUnit = true;
-let cacheStock = 0, cacheWater = 0;
-let cacheSputumStock = 0, cacheSputumWater = 0;
-let cacheFabricStock = 0, cacheFabricWater = 0;
-let cacheTableStock = 0, cacheTableWater = 0;
+let cacheSputum = 0, cacheSputumW = 0;
+let cacheFabric = 0, cacheFabricW = 0;
+let cacheTable = 0, cacheTableW = 0;
+let cacheClean = 0, cacheCleanW = 0;
+let cacheRub = 0, cacheRubW = 0;
+let cacheVomit = 0, cacheVomitW = 0;
+let cacheFeces = 0, cacheFecesW = 0;
+let cacheUrine = 0, cacheUrineW = 0;
+let cacheSewage = 0, cacheSewageW = 0;
+let cacheBody = 0, cacheBodyW = 0;
+let cacheRoom = 0, cacheRoomW = 0;
+
+// 格式化数字：保留1位小数，.0 显示为整数
+function formatNum(num) {
+    let n = parseFloat(num) || 0;
+    let fixed = n.toFixed(1);
+    return fixed.endsWith('.0') ? parseInt(fixed) : fixed;
+}
 
 document.getElementById('convertBtn').addEventListener('click', function () {
     useAutoUnit = !useAutoUnit;
@@ -214,9 +244,15 @@ document.getElementById('convertBtn').addEventListener('click', function () {
 document.getElementById('wallType').addEventListener('change', function () {
     const val = this.value;
     const doseInput = document.getElementById('wallDose');
-    if (val === 'none') doseInput.value = '';
-    else if (val === 'soil') doseInput.value = '150ml/m²';
-    else doseInput.value = '100ml/m²';
+    if (val === 'none') {
+        doseInput.value = '';
+    } else if (val === 'soil') {
+        doseInput.value = '200ml/m²';
+    } else if (val === 'other') {
+        doseInput.value = '100ml/m²';
+    } else if (val === 'tile') {
+        doseInput.value = '50ml/m²';
+    }
 });
 document.getElementById('wallType').dispatchEvent(new Event('change'));
 
@@ -236,11 +272,25 @@ document.getElementById('disinfectObj').dispatchEvent(new Event('change'));
 
 function getUnitText(num) {
     num = parseFloat(num) || 0;
+    let val, unit;
     if (useAutoUnit) {
-        return num >= 1000 ? [(num / 1000).toFixed(1), 'L'] : [num.toFixed(1), 'ml'];
+        if (num >= 1000) {
+            val = num / 1000;
+            unit = 'L';
+        } else {
+            val = num;
+            unit = 'ml';
+        }
     } else {
-        return num >= 1000 ? [num.toFixed(1), 'ml'] : [(num / 1000).toFixed(1), 'L'];
+        if (num >= 1000) {
+            val = num;
+            unit = 'ml';
+        } else {
+            val = num / 1000;
+            unit = 'L';
+        }
     }
+    return [formatNum(val), unit];
 }
 
 function renderAllResult() {
@@ -257,28 +307,61 @@ function renderAllResult() {
     let html = "";
 
     if (obj === 'sputum' && val > 0) {
-        const s = getUnitText(cacheSputumStock);
-        const w = getUnitText(cacheSputumWater);
-        html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸泡静置，作用时间2小时</p>`;
+        let s = getUnitText(cacheSputum), w = getUnitText(cacheSputumW);
+        html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${s[1]}</strong>；浸泡静置，作用时间2小时</p>`;
     }
     if (obj === 'fabricWater' && val > 0) {
-        const s = getUnitText(cacheFabricStock);
-        const w = getUnitText(cacheFabricWater);
-        html += `<p><span class="blue-title">【物表消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；擦拭/喷洒，作用时间30分钟</p>`;
+        let s = getUnitText(cacheFabric), w = getUnitText(cacheFabricW);
+        html += `<p><span class="blue-title">【物表消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；擦拭或喷洒，作用时间60分钟</p>`;
     }
     if (obj === 'tablewareWater' && val > 0) {
-        const s = getUnitText(cacheTableStock);
-        const w = getUnitText(cacheTableWater);
+        let s = getUnitText(cacheTable), w = getUnitText(cacheTableW);
         html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
     }
-    if (totalArea > 0) {
-        const s = getUnitText(cacheStock);
-        const w = getUnitText(cacheWater);
-        html += `<p><span class="blue-title">【室内消杀】</span>地面${groundArea.toFixed(1)}㎡`;
-        if (wallType !== 'none') {
-            html += `，墙面${wallArea.toFixed(1)}㎡，总面积${totalArea.toFixed(1)}㎡`;
+    if (obj === 'cleanWater' && val > 0) {
+        let s = getUnitText(cacheClean), w = getUnitText(cacheCleanW);
+        html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
+    }
+    if (obj === 'rubWater' && val > 0) {
+        let s = getUnitText(cacheRub), w = getUnitText(cacheRubW);
+        html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；喷洒浸透，作用时间60分钟</p>`;
+    }
+    if (obj === 'vomit' && val > 0) {
+        let s = getUnitText(cacheVomit), w = getUnitText(cacheVomitW);
+        html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+    }
+    if (obj === 'feces' && val > 0) {
+        let s = getUnitText(cacheFeces), w = getUnitText(cacheFecesW);
+        if (cacheFecesW <= 0) {
+            html += `<p><span class="blue-title">【大便消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+        } else {
+            html += `<p><span class="blue-title">【大便消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
         }
-        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟</p>`;
+    }
+    if (obj === 'urine' && val > 0) {
+        let s = getUnitText(cacheUrine), w = getUnitText(cacheUrineW);
+        html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+    }
+    if (obj === 'sewage' && val > 0) {
+        let s = getUnitText(cacheSewage);
+        html += `<p><span class="blue-title">【生活污水消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间1.5小时，检查余氯大于6.5mg/L时才可排放。</p>`;
+    }
+    if (obj === 'bodyWater' && val > 0) {
+        let s = getUnitText(cacheBody), w = getUnitText(cacheBodyW);
+        html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸湿布巾包裹消杀</p>`;
+    }
+    if (totalArea > 0) {
+        let s = getUnitText(cacheRoom), w = getUnitText(cacheRoomW);
+        html += `<p><span class="blue-title">【室内消杀】</span>地面${formatNum(groundArea)}㎡`;
+        if (wallArea > 0) {
+            html += `，墙面${formatNum(wallArea)}㎡，总面积${formatNum(totalArea)}㎡`;
+        }
+        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟`;
+        // 墙面不为“不消毒”时才追加提示语
+        if (wallType !== 'none') {
+            html += `。喷雾量根据墙面结构不同，以湿润不向下流水为度`;
+        }
+        html += `。</p>`;
     }
 
     document.getElementById('result').innerHTML = html;
@@ -294,37 +377,98 @@ function calcAll() {
     const wallH = wallType !== 'none' ? 2 : 0;
     const wallDoseText = document.getElementById('wallDose').value;
     const wallDosePer = parseFloat(wallDoseText.replace(/[^0-9.]/g, '')) || 100;
-    const groundDosePer = (obj === 'sputum' && val > 0) ? 300 : 100;
-
     const origPct = parseFloat(document.getElementById('origConc').value) || 5;
-    const targetEnv = parseFloat(document.getElementById('targetEnv').value) || 1000;
     const origMgL = origPct * 10000;
 
-    cacheSputumStock = 0; cacheSputumWater = 0;
+    // 清空缓存
+    cacheSputum = cacheSputumW = 0;
+    cacheFabric = cacheFabricW = 0;
+    cacheTable = cacheTableW = 0;
+    cacheClean = cacheCleanW = 0;
+    cacheRub = cacheRubW = 0;
+    cacheVomit = cacheVomitW = 0;
+    cacheFeces = cacheFecesW = 0;
+    cacheUrine = cacheUrineW = 0;
+    cacheSewage = cacheSewageW = 0;
+    cacheBody = cacheBodyW = 0;
+    cacheRoom = cacheRoomW = 0;
+
+    // 痰液
     if (obj === 'sputum' && val > 0) {
-        const spuTotalMl = val * 2;
-        cacheSputumStock = origMgL === 0 ? 0 : (20000 * spuTotalMl) / origMgL;
-        cacheSputumWater = spuTotalMl - cacheSputumStock;
+        let totalMl = val * 1000;
+        cacheSputum = origMgL ? (20000 * totalMl) / origMgL : 0;
+        cacheSputumW = totalMl - cacheSputum;
     }
-    cacheFabricStock = 0; cacheFabricWater = 0;
+    // 物表
     if (obj === 'fabricWater' && val > 0) {
-        const totalMl = val * 1000;
-        cacheFabricStock = origMgL === 0 ? 0 : (1000 * totalMl) / origMgL;
-        cacheFabricWater = totalMl - cacheFabricStock;
+        let totalMl = val * 1000;
+        cacheFabric = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheFabricW = totalMl - cacheFabric;
     }
-    cacheTableStock = 0; cacheTableWater = 0;
+    // 餐具
     if (obj === 'tablewareWater' && val > 0) {
-        const totalMl = val * 1000;
-        cacheTableStock = origMgL === 0 ? 0 : (500 * totalMl) / origMgL;
-        cacheTableWater = totalMl - cacheTableStock;
+        let totalMl = val * 1000;
+        cacheTable = origMgL ? (500 * totalMl) / origMgL : 0;
+        cacheTableW = totalMl - cacheTable;
     }
-    cacheStock = 0; cacheWater = 0;
+    // 清洁用品
+    if (obj === 'cleanWater' && val > 0) {
+        let totalMl = val * 1000;
+        cacheClean = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheCleanW = totalMl - cacheClean;
+    }
+    // 垃圾
+    if (obj === 'rubWater' && val > 0) {
+        let totalMl = val * 1000;
+        cacheRub = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheRubW = totalMl - cacheRub;
+    }
+    // 呕吐物
+    if (obj === 'vomit' && val > 0) {
+        let totalMl = val;
+        cacheVomit = origMgL ? (20000 * totalMl) / origMgL : 0;
+        cacheVomitW = totalMl - cacheVomit;
+    }
+    // 大便
+    if (obj === 'feces' && val > 0) {
+        let totalMl = val * 2;
+        cacheFeces = origMgL ? (50000 * totalMl) / origMgL : 0;
+        cacheFecesW = totalMl - cacheFeces;
+    }
+    // 小便
+    if (obj === 'urine' && val > 0) {
+        let totalMl = val * 10;
+        cacheUrine = origMgL ? (10000 * totalMl) / origMgL : 0;
+        cacheUrineW = totalMl - cacheUrine;
+    }
+    // 生活污水
+    if (obj === 'sewage' && val > 0) {
+        let totalMl = val * 1000;
+        let target = val <= 100 ? 200 : 100;
+        cacheSewage = origMgL ? (target * totalMl) / origMgL : 0;
+        cacheSewageW = totalMl - cacheSewage;
+    }
+    // 遗体
+    if (obj === 'bodyWater' && val > 0) {
+        let totalMl = val * 1000;
+        cacheBody = origMgL ? (10000 * totalMl) / origMgL : 0;
+        cacheBodyW = totalMl - cacheBody;
+    }
+
+    // 室内地面用量逻辑：默认200，选中痰液且有数值则300
+    let groundDose = 200;
+    if (obj === 'sputum' && val > 0) {
+        groundDose = 300;
+    }
+
+    // 室内消杀总液量计算
     const groundArea = L * W;
     const wallArea = wallH ? 2 * (L + W) * wallH : 0;
-    const totalMl = groundArea * groundDosePer + wallArea * wallDosePer;
+    const totalMl = groundArea * groundDose + wallArea * wallDosePer;
     if (totalMl > 0) {
-        cacheStock = (totalMl * targetEnv) / origMgL;
-        cacheWater = totalMl - cacheStock;
+        let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 1000;
+        cacheRoom = origMgL ? (totalMl * targetEnv) / origMgL : 0;
+        cacheRoomW = totalMl - cacheRoom;
     }
 
     renderAllResult();
@@ -342,10 +486,17 @@ function resetAll() {
     document.getElementById('disinfectObj').value = 'sputum';
     document.getElementById('disinfectObj').dispatchEvent(new Event('change'));
 
-    cacheStock = cacheWater = 0;
-    cacheSputumStock = cacheSputumWater = 0;
-    cacheFabricStock = cacheFabricWater = 0;
-    cacheTableStock = cacheTableWater = 0;
+    cacheSputum = cacheSputumW = 0;
+    cacheFabric = cacheFabricW = 0;
+    cacheTable = cacheTableW = 0;
+    cacheClean = cacheCleanW = 0;
+    cacheRub = cacheRubW = 0;
+    cacheVomit = cacheVomitW = 0;
+    cacheFeces = cacheFecesW = 0;
+    cacheUrine = cacheUrineW = 0;
+    cacheSewage = cacheSewageW = 0;
+    cacheBody = cacheBodyW = 0;
+    cacheRoom = cacheRoomW = 0;
 }
 </script>
 </body>
