@@ -186,8 +186,16 @@
             color: #005a9c;
             font-weight: bold;
         }
+        .tip-info{
+            margin-top: 15px;
+            padding: 8px 0;
+            text-align: left;
+            color: #333;
+            font-size: clamp(11px,2.8vw,13px);
+            line-height: 1.6;
+        }
         .bottom-info{
-            margin-top: 20px;
+            margin-top: 5px;
             text-align: center;
             color: #668cb3;
             font-size: clamp(10px,2.5vw,12px);
@@ -214,7 +222,7 @@
     <div class="row-item">
         <div class="title-label">消毒对象：</div>
         <select id="disinfectObj">
-            <option value="sputum">痰液(L)</option>
+            <option value="sputum">痰液(ml)</option>
             <option value="fabricWater">物表(L)</option>
             <option value="tablewareWater">餐具(L)</option>
             <option value="cleanWater">清洁用品(L)</option>
@@ -261,6 +269,11 @@
     </div>
 
     <div class="res" id="result"></div>
+
+    <!-- 操作说明 已更新最新内容 -->
+    <div class="tip-info" id="tipText">
+        操作说明：选择消毒对象并输入用量，按需填写室内长宽高，点击计算即可得出 84 原液与加水量。表中的“作用浓度”仅指室内消毒时的配制浓度。消毒对象的作用浓度分别是大便50000mg/L，痰液、呕吐物20000mg/L，小便、遗体10000mg/L，垃圾2000mg/L，物表、清洁用品2000mg/L，餐具500mg/L，生活污水量>100L时作用浓度为100mg/L，否则为200mg/L。
+    </div>
 
     <div class="bottom-info">恩施市疾病预防控制中心</div>
 
@@ -309,12 +322,12 @@ document.getElementById('disinfectObj').addEventListener('change', function () {
     const val = this.value;
     const input = document.getElementById('inputVal');
     switch (val) {
-        case 'sputum': input.placeholder = "输入痰液量"; break;
-        case 'vomit': input.placeholder = "输入呕吐物量"; break;
-        case 'feces': input.placeholder = "输入大便量"; break;
-        case 'urine': input.placeholder = "输入小便量"; break;
-        case 'sewage': input.placeholder = "输入污水量"; break;
-        default: input.placeholder = "输入消毒液量";
+        case 'sputum': input.placeholder = "输入痰液量(ml)"; break;
+        case 'vomit': input.placeholder = "输入呕吐物量(ml)"; break;
+        case 'feces': input.placeholder = "输入大便量(ml)"; break;
+        case 'urine': input.placeholder = "输入小便量(ml)"; break;
+        case 'sewage': input.placeholder = "输入污水量(L)"; break;
+        default: input.placeholder = "输入消毒液量(L)";
     }
 });
 document.getElementById('disinfectObj').dispatchEvent(new Event('change'));
@@ -406,7 +419,6 @@ function renderAllResult() {
             html += `，墙面${formatNum(wallArea)}㎡，总面积${formatNum(totalArea)}㎡`;
         }
         html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟`;
-        // 墙面不为“不消毒”时才追加提示语
         if (wallType !== 'none') {
             html += `。喷雾量根据墙面结构不同，以湿润不向下流水为度`;
         }
@@ -442,10 +454,11 @@ function calcAll() {
     cacheBody = cacheBodyW = 0;
     cacheRoom = cacheRoomW = 0;
 
-    // 痰液
+    // 痰液计算
     if (obj === 'sputum' && val > 0) {
-        let totalMl = val * 1000;
-        cacheSputum = origMgL ? (20000 * totalMl) / origMgL : 0;
+        let totalMl = val * 2;
+        const target = 20000;
+        cacheSputum = origMgL ? (target * totalMl) / origMgL : 0;
         cacheSputumW = totalMl - cacheSputum;
     }
     // 物表
@@ -469,7 +482,7 @@ function calcAll() {
     // 垃圾
     if (obj === 'rubWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheRub = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheRub = origMgL ? (2000 * totalMl) / origMgL : 0;
         cacheRubW = totalMl - cacheRub;
     }
     // 呕吐物
@@ -492,8 +505,8 @@ function calcAll() {
     }
     // 生活污水
     if (obj === 'sewage' && val > 0) {
+        let target = val > 100 ? 100 : 200;
         let totalMl = val * 1000;
-        let target = val <= 100 ? 200 : 100;
         cacheSewage = origMgL ? (target * totalMl) / origMgL : 0;
         cacheSewageW = totalMl - cacheSewage;
     }
@@ -504,13 +517,12 @@ function calcAll() {
         cacheBodyW = totalMl - cacheBody;
     }
 
-    // 室内地面用量逻辑：默认200，选中痰液且有数值则300
+    // 室内地面用量
     let groundDose = 200;
     if (obj === 'sputum' && val > 0) {
         groundDose = 300;
     }
 
-    // 室内消杀总液量计算
     const groundArea = L * W;
     const wallArea = wallH ? 2 * (L + W) * wallH : 0;
     const totalMl = groundArea * groundDose + wallArea * wallDosePer;
@@ -521,6 +533,8 @@ function calcAll() {
     }
 
     renderAllResult();
+    // 计算完成，隐藏操作说明
+    document.getElementById('tipText').style.display = 'none';
 }
 
 function resetAll() {
@@ -546,6 +560,9 @@ function resetAll() {
     cacheSewage = cacheSewageW = 0;
     cacheBody = cacheBodyW = 0;
     cacheRoom = cacheRoomW = 0;
+
+    // 重置后重新显示操作说明
+    document.getElementById('tipText').style.display = 'block';
 }
 </script>
 </body>
