@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -30,7 +31,6 @@
             font-size: clamp(18px,4vw,22px);
             margin-bottom: 8px;
         }
-        /* 顶部行 + 同排分隔线 */
         .header-wrap {
             position: relative;
             margin: 8px 0 18px;
@@ -84,7 +84,6 @@
             white-space: nowrap;
             font-size: clamp(12px,3vw,14px);
         }
-        /* 作用浓度：黑色、同字号，与墙面对齐 */
         .wall-align-label {
             color: #000;
             font-size: clamp(12px,3vw,14px);
@@ -101,37 +100,30 @@
             width: 32%;
             min-width: 120px;
         }
-        /* 消毒对象输入框收窄5个字符 */
         #inputVal{
             width: 28%;
             min-width: 100px;
         }
-        /* 长度输入框收窄2个字符 */
         #len {
             width: 24%;
             min-width: 80px;
         }
-        /* 宽度输入框收窄2个字符 */
         #wid{
             width: 24%;
             min-width: 80px;
         }
-        /* 墙面下拉框收窄1字符 */
         #wallType {
             width: 26%;
             min-width: 85px;
         }
-        /* 墙面用量输入框收窄3个字符 */
         #wallDose {
             width: 22%;
             min-width: 75px;
         }
-        /* 原液浓度输入框收窄1字符 */
         #origConc{
             width: 55px;
             min-width: 45px;
         }
-        /* 作用浓度输入框收窄1字符 */
         #targetEnv{
             width: 18%;
             min-width: 75px;
@@ -166,7 +158,6 @@
         input:focus, select:focus {
             border-color: #005a9c;
         }
-        /* 计算结果字号与消毒对象一致 */
         .res {
             margin-top: 15px;
             padding: 15px;
@@ -178,6 +169,10 @@
         .res p {
             margin: 6px 0;
         }
+        .num-normal{
+            color:#000;
+            font-weight:normal;
+        }
         strong {
             color: #c00000;
             font-weight: bold;
@@ -186,13 +181,14 @@
             color: #005a9c;
             font-weight: bold;
         }
-        .tip-info{
-            margin-top: 15px;
-            padding: 8px 0;
-            text-align: left;
-            color: #333;
-            font-size: clamp(11px,2.8vw,13px);
-            line-height: 1.6;
+        .tip-desc{
+            margin-top:12px;
+            padding:10px;
+            background:#f5f9ff;
+            border-radius:6px;
+            font-size:13px;
+            line-height:1.7;
+            color:#333;
         }
         .bottom-info{
             margin-top: 5px;
@@ -207,8 +203,6 @@
 </head>
 <body>
     <h3>传染病消毒剂配制计算器</h3>
-
-    <!-- 信息行与分隔线同排 -->
     <div class="header-wrap">
         <div class="divider-line"></div>
         <div class="header-row">
@@ -225,7 +219,7 @@
             <option value="sputum">痰液(ml)</option>
             <option value="fabricWater">物表(L)</option>
             <option value="tablewareWater">餐具(L)</option>
-            <option value="cleanWater">清洁用品(L)</option>
+            <option value="cleanWater">清洁用具(L)</option>
             <option value="rubWater">垃圾(L)</option>
             <option value="vomit">呕吐物(ml)</option>
             <option value="feces">大便(ml)</option>
@@ -256,7 +250,6 @@
         <label>，用量</label>
         <input type="text" id="wallDose">
     </div>
-    <!-- 作用浓度向后偏移，与墙面对齐 -->
     <div class="row-item">
         <label class="wall-align-label">作用浓度(mg/L)</label>
         <input type="number" id="targetEnv" value="1000" min="100" max="99999">
@@ -270,9 +263,12 @@
 
     <div class="res" id="result"></div>
 
-    <!-- 操作说明 已更新最新内容 -->
-    <div class="tip-info" id="tipText">
-        操作说明：选择消毒对象并输入用量，按需填写室内长宽高，点击计算即可得出 84 原液与加水量。表中的“作用浓度”仅指室内消毒时的配制浓度。消毒对象的作用浓度分别是大便50000mg/L，痰液、呕吐物20000mg/L，小便、遗体10000mg/L，垃圾2000mg/L，物表、清洁用品2000mg/L，餐具500mg/L，生活污水量>100L时作用浓度为100mg/L，否则为200mg/L。
+    <div class="tip-desc" id="tipInfo">
+操作说明：
+1.原液浓度：默认值是5%，可重新输入数值；
+2.消毒对象：选择污染物类型，填写消毒液或污染物体积；
+3.室内消毒：长度、宽度输入框填写米数，墙面下拉框选择材质，用量自动匹配，作用浓度默认值1000mg/L，用量及作用浓度输入框可手动输入修改数值；
+4.填完数据点【计算】出配比，【重置】清空恢复初始，【ml/L转换】对计算结果的单位进行ml和L的转换。
     </div>
 
     <div class="bottom-info">恩施市疾病预防控制中心</div>
@@ -290,8 +286,8 @@ let cacheUrine = 0, cacheUrineW = 0;
 let cacheSewage = 0, cacheSewageW = 0;
 let cacheBody = 0, cacheBodyW = 0;
 let cacheRoom = 0, cacheRoomW = 0;
+let targetConc = 0;
 
-// 格式化数字：保留1位小数，.0 显示为整数
 function formatNum(num) {
     let n = parseFloat(num) || 0;
     let fixed = n.toFixed(1);
@@ -361,6 +357,7 @@ function renderAllResult() {
     const L = parseFloat(document.getElementById('len').value) || 0;
     const W = parseFloat(document.getElementById('wid').value) || 0;
     const wallType = document.getElementById('wallType').value;
+    const conc = targetConc;
 
     const groundArea = L * W;
     const wallArea = wallType !== 'none' ? 2 * (L + W) * 2 : 0;
@@ -370,55 +367,56 @@ function renderAllResult() {
 
     if (obj === 'sputum' && val > 0) {
         let s = getUnitText(cacheSputum), w = getUnitText(cacheSputumW);
-        html += `<p><span class="blue-title">【痰液消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${s[1]}</strong>；浸泡静置，作用时间2小时</p>`;
+        html += `<p><span class="blue-title">【痰液消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${s[1]}</strong>；浸泡静置，作用时间2小时</p>`;
     }
     if (obj === 'fabricWater' && val > 0) {
         let s = getUnitText(cacheFabric), w = getUnitText(cacheFabricW);
-        html += `<p><span class="blue-title">【物表消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；擦拭或喷洒，作用时间60分钟</p>`;
+        html += `<p><span class="blue-title">【物表消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；擦拭或喷洒，作用时间60分钟</p>`;
     }
     if (obj === 'tablewareWater' && val > 0) {
         let s = getUnitText(cacheTable), w = getUnitText(cacheTableW);
-        html += `<p><span class="blue-title">【餐具消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
+        html += `<p><span class="blue-title">【餐具消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
     }
     if (obj === 'cleanWater' && val > 0) {
         let s = getUnitText(cacheClean), w = getUnitText(cacheCleanW);
-        html += `<p><span class="blue-title">【清洁用品消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
+        html += `<p><span class="blue-title">【清洁用具消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；浸泡，作用时间30分钟</p>`;
     }
     if (obj === 'rubWater' && val > 0) {
         let s = getUnitText(cacheRub), w = getUnitText(cacheRubW);
-        html += `<p><span class="blue-title">【垃圾消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；喷洒浸透，作用时间60分钟</p>`;
+        html += `<p><span class="blue-title">【垃圾消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；喷洒浸透，作用时间60分钟</p>`;
     }
     if (obj === 'vomit' && val > 0) {
         let s = getUnitText(cacheVomit), w = getUnitText(cacheVomitW);
-        html += `<p><span class="blue-title">【呕吐物消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+        html += `<p><span class="blue-title">【呕吐物消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
     }
     if (obj === 'feces' && val > 0) {
         let s = getUnitText(cacheFeces), w = getUnitText(cacheFecesW);
         if (cacheFecesW <= 0) {
-            html += `<p><span class="blue-title">【大便消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+            html += `<p><span class="blue-title">【大便消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间2小时</p>`;
         } else {
-            html += `<p><span class="blue-title">【大便消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+            html += `<p><span class="blue-title">【大便消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，加入原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
         }
     }
     if (obj === 'urine' && val > 0) {
         let s = getUnitText(cacheUrine), w = getUnitText(cacheUrineW);
-        html += `<p><span class="blue-title">【小便消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
+        html += `<p><span class="blue-title">【小便消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；搅匀静置，作用时间2小时</p>`;
     }
     if (obj === 'sewage' && val > 0) {
         let s = getUnitText(cacheSewage);
-        html += `<p><span class="blue-title">【生活污水消毒】</span>加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间1.5小时，检查余氯大于6.5mg/L时才可排放。</p>`;
+        html += `<p><span class="blue-title">【生活污水消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，加入原液 <strong>${s[0]} ${s[1]}</strong>；搅匀静置，作用时间1.5小时，检查余氯大于6.5mg/L时才可排放。</p>`;
     }
     if (obj === 'bodyWater' && val > 0) {
         let s = getUnitText(cacheBody), w = getUnitText(cacheBodyW);
-        html += `<p><span class="blue-title">【遗体消毒】</span>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；浸湿布巾包裹消杀</p>`;
+        html += `<p><span class="blue-title">【遗体消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；浸湿布巾包裹消杀</p>`;
     }
     if (totalArea > 0) {
         let s = getUnitText(cacheRoom), w = getUnitText(cacheRoomW);
-        html += `<p><span class="blue-title">【室内消杀】</span>地面${formatNum(groundArea)}㎡`;
+        //已修改：【室内消杀】→【室内消毒】
+        html += `<p><span class="blue-title">【室内消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，地面${formatNum(groundArea)}㎡`;
         if (wallArea > 0) {
             html += `，墙面${formatNum(wallArea)}㎡，总面积${formatNum(totalArea)}㎡`;
         }
-        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>；加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟`;
+        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟`;
         if (wallType !== 'none') {
             html += `。喷雾量根据墙面结构不同，以湿润不向下流水为度`;
         }
@@ -429,19 +427,17 @@ function renderAllResult() {
 }
 
 function calcAll() {
+    document.getElementById('tipInfo').style.display = 'none';
+
     const obj = document.getElementById('disinfectObj').value;
     const val = parseFloat(document.getElementById('inputVal').value) || 0;
     const L = parseFloat(document.getElementById('len').value) || 0;
     const W = parseFloat(document.getElementById('wid').value) || 0;
     const wallType = document.getElementById('wallType').value;
-
-    const wallH = wallType !== 'none' ? 2 : 0;
-    const wallDoseText = document.getElementById('wallDose').value;
-    const wallDosePer = parseFloat(wallDoseText.replace(/[^0-9.]/g, '')) || 100;
     const origPct = parseFloat(document.getElementById('origConc').value) || 5;
     const origMgL = origPct * 10000;
+    let setConc = 0;
 
-    // 清空缓存
     cacheSputum = cacheSputumW = 0;
     cacheFabric = cacheFabricW = 0;
     cacheTable = cacheTableW = 0;
@@ -454,90 +450,89 @@ function calcAll() {
     cacheBody = cacheBodyW = 0;
     cacheRoom = cacheRoomW = 0;
 
-    // 痰液计算
+    if(obj === 'sputum' || obj === 'vomit') setConc = 20000;
+    else if(obj === 'feces') setConc = 50000;
+    else if(obj === 'urine' || obj === 'bodyWater') setConc = 10000;
+    else if(obj === 'rubWater') setConc = 2000;
+    else if(obj === 'fabricWater' || obj === 'cleanWater') setConc = 1000;
+    else if(obj === 'tablewareWater') setConc = 500;
+    else if(obj === 'sewage') setConc = val>100 ? 100 : 200;
+    else if(L>0 || W>0) setConc = parseFloat(document.getElementById('targetEnv').value);
+
+    targetConc = setConc;
+
     if (obj === 'sputum' && val > 0) {
         let totalMl = val * 2;
-        const target = 20000;
-        cacheSputum = origMgL ? (target * totalMl) / origMgL : 0;
+        cacheSputum = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheSputumW = totalMl - cacheSputum;
     }
-    // 物表
     if (obj === 'fabricWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheFabric = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheFabric = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheFabricW = totalMl - cacheFabric;
     }
-    // 餐具
     if (obj === 'tablewareWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheTable = origMgL ? (500 * totalMl) / origMgL : 0;
+        cacheTable = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheTableW = totalMl - cacheTable;
     }
-    // 清洁用品
     if (obj === 'cleanWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheClean = origMgL ? (1000 * totalMl) / origMgL : 0;
+        cacheClean = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheCleanW = totalMl - cacheClean;
     }
-    // 垃圾
     if (obj === 'rubWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheRub = origMgL ? (2000 * totalMl) / origMgL : 0;
+        cacheRub = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheRubW = totalMl - cacheRub;
     }
-    // 呕吐物
     if (obj === 'vomit' && val > 0) {
         let totalMl = val;
-        cacheVomit = origMgL ? (20000 * totalMl) / origMgL : 0;
+        cacheVomit = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheVomitW = totalMl - cacheVomit;
     }
-    // 大便
     if (obj === 'feces' && val > 0) {
         let totalMl = val * 2;
-        cacheFeces = origMgL ? (50000 * totalMl) / origMgL : 0;
+        cacheFeces = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheFecesW = totalMl - cacheFeces;
     }
-    // 小便
     if (obj === 'urine' && val > 0) {
         let totalMl = val * 10;
-        cacheUrine = origMgL ? (10000 * totalMl) / origMgL : 0;
+        cacheUrine = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheUrineW = totalMl - cacheUrine;
     }
-    // 生活污水
     if (obj === 'sewage' && val > 0) {
-        let target = val > 100 ? 100 : 200;
         let totalMl = val * 1000;
-        cacheSewage = origMgL ? (target * totalMl) / origMgL : 0;
+        cacheSewage = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheSewageW = totalMl - cacheSewage;
     }
-    // 遗体
     if (obj === 'bodyWater' && val > 0) {
         let totalMl = val * 1000;
-        cacheBody = origMgL ? (10000 * totalMl) / origMgL : 0;
+        cacheBody = origMgL ? (setConc * totalMl) / origMgL : 0;
         cacheBodyW = totalMl - cacheBody;
     }
 
-    // 室内地面用量
     let groundDose = 200;
-    if (obj === 'sputum' && val > 0) {
-        groundDose = 300;
-    }
-
+    if (obj === 'sputum' && val > 0) groundDose = 300;
+    const wallH = wallType !== 'none' ? 2 : 0;
+    const wallDoseText = document.getElementById('wallDose').value;
+    const wallDosePer = parseFloat(wallDoseText.replace(/[^0-9.]/g, '')) || 100;
     const groundArea = L * W;
     const wallArea = wallH ? 2 * (L + W) * wallH : 0;
     const totalMl = groundArea * groundDose + wallArea * wallDosePer;
     if (totalMl > 0) {
-        let targetEnv = parseFloat(document.getElementById('targetEnv').value) || 1000;
-        cacheRoom = origMgL ? (totalMl * targetEnv) / origMgL : 0;
+        let roomConc = parseFloat(document.getElementById('targetEnv').value);
+        targetConc = roomConc;
+        cacheRoom = origMgL ? (roomConc * totalMl) / origMgL : 0;
         cacheRoomW = totalMl - cacheRoom;
     }
 
     renderAllResult();
-    // 计算完成，隐藏操作说明
-    document.getElementById('tipText').style.display = 'none';
 }
 
 function resetAll() {
+    document.getElementById('tipInfo').style.display = 'block';
+
     document.getElementById('inputVal').value = '';
     document.getElementById('len').value = '';
     document.getElementById('wid').value = '';
@@ -560,9 +555,7 @@ function resetAll() {
     cacheSewage = cacheSewageW = 0;
     cacheBody = cacheBodyW = 0;
     cacheRoom = cacheRoomW = 0;
-
-    // 重置后重新显示操作说明
-    document.getElementById('tipText').style.display = 'block';
+    targetConc = 0;
 }
 </script>
 </body>
