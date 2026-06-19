@@ -1,46 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 强化微信移动端适配 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- 微信网页优化 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
     <title>传染病消毒剂配制计算器</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent; /* 去除微信点击高亮 */
         }
         html,body{
             overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; /* 微信顺滑滚动 */
         }
         body {
-            font-family: "Microsoft Yahei", 微软雅黑, sans-serif;
+            font-family: "Microsoft Yahei", 微软雅黑;
             width: 100%;
-            max-width: 100%; /* 适配手机全屏 */
-            margin: 0 auto;
-            padding: 10px 15px;
-            background: #f5f5f5; /* 微信端更舒适的背景 */
-        }
-        .container {
-            background: #fff;
-            border-radius: 10px;
+            max-width: 480px;
+            margin: 15px auto;
             padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
+            background: #fff;
+            border: 1px solid #dce4ee;
+            border-radius: 10px;
+            box-shadow: 3px 3px 12px rgba(0,0,0.08);
         }
         h3 {
             text-align: center;
             color: #005a9c;
-            font-size: clamp(18px,5vw,22px);
-            margin-bottom: 12px;
+            font-size: clamp(18px,4vw,22px);
+            margin-bottom: 8px;
         }
         .header-wrap {
             position: relative;
@@ -71,38 +60,22 @@
             transform: translateY(-50%);
             z-index: 1;
         }
-        /* 核心：横向滚动容器 */
-        .scroll-container {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 10px 0;
-            padding-bottom: 8px; /* 滚动条预留空间 */
-        }
-        /* 横向滚动内容区 */
-        .scroll-content {
-            width: max-content;
-            min-width: 100%;
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 0;
-        }
         .row-item{
             display: flex;
             margin: 10px 0;
             align-items: center;
-            flex-wrap: wrap; /* 移动端自适应换行 */
+            flex-wrap: nowrap;
             width: 100%;
-            gap: 8px;
+            gap: 4px;
         }
         .title-label {
             color: #005a9c;
             font-weight: bold;
             font-size: clamp(12px,3vw,14px);
-            min-width: 70px; /* 缩小标签宽度适配手机 */
+            width: 80px;
+            min-width: 80px;
             white-space: nowrap;
+            margin-right: 4px;
         }
         label {
             display: inline-block;
@@ -114,25 +87,46 @@
         .wall-align-label {
             color: #000;
             font-size: clamp(12px,3vw,14px);
-            margin-left: 0; /* 移除偏移，适配移动端 */
-            flex: 0 0 auto;
+            margin-left: 86px;
         }
         select, input {
-            padding: 10px 12px; /* 加大点击区域 */
+            padding: 8px 10px;
             font-size: clamp(12px,3vw,14px);
             border: 1px solid #b8c8dc;
-            border-radius: 6px; /* 圆角更适配手机 */
             outline: none;
             flex-shrink: 1;
-            -webkit-appearance: none; /* 去除iOS默认样式 */
-            appearance: none;
-            background: #fff;
         }
-        /* 统一输入框最小宽度，适配横向滚动 */
-        #disinfectObj, #inputVal, #len, #wid, #wallType, #wallDose, #origConc, #targetEnv {
+        #disinfectObj {
+            width: 32%;
+            min-width: 120px;
+        }
+        #inputVal{
+            width: 28%;
+            min-width: 100px;
+        }
+        #len {
+            width: 24%;
             min-width: 80px;
-            flex: 1;
-            max-width: 150px;
+        }
+        #wid{
+            width: 24%;
+            min-width: 80px;
+        }
+        #wallType {
+            width: 26%;
+            min-width: 85px;
+        }
+        #wallDose {
+            width: 22%;
+            min-width: 75px;
+        }
+        #origConc{
+            width: 55px;
+            min-width: 45px;
+        }
+        #targetEnv{
+            width: 18%;
+            min-width: 75px;
         }
         .btn-row{
             display: flex;
@@ -142,14 +136,12 @@
         }
         .btn-row button{
             flex:1;
-            padding: 12px 10px; /* 加大按钮点击区域 */
+            padding: 10px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: clamp(14px,3vw,16px);
             cursor: pointer;
             font-weight: 500;
-            -webkit-appearance: none;
-            appearance: none;
         }
         #calcBtn {
             background: #005a9c;
@@ -165,7 +157,6 @@
         }
         input:focus, select:focus {
             border-color: #005a9c;
-            box-shadow: 0 0 0 2px rgba(0,90,156,0.1);
         }
         .res {
             margin-top: 15px;
@@ -174,11 +165,9 @@
             border-radius: 8px;
             font-size: clamp(12px,3vw,14px);
             line-height: 1.8;
-            white-space: pre-wrap; /* 防止结果文字溢出 */
         }
         .res p {
             margin: 6px 0;
-            word-break: break-all; /* 适配长数字换行 */
         }
         .num-normal{
             color:#000;
@@ -202,7 +191,7 @@
             color:#333;
         }
         .bottom-info{
-            margin-top: 15px;
+            margin-top: 5px;
             text-align: center;
             color: #668cb3;
             font-size: clamp(10px,2.5vw,12px);
@@ -210,115 +199,79 @@
             padding-top: 12px;
             border-top: 1px dashed #eee;
         }
-        /* 滚动条美化（微信端） */
-        ::-webkit-scrollbar {
-            height: 6px;
-            width: 6px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #b8c8dc;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f5f5f5;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h3>传染病消毒剂配制计算器</h3>
-        <div class="header-wrap">
-            <div class="divider-line"></div>
-            <div class="header-row">
-                <span>消毒剂名称：次氯酸钠(84)</span>
-                <span> </span>
-                <label>原液浓度(%)</label>
-                <input type="number" id="origConc" value="5" min="0.1" step="0.1">
-            </div>
+    <h3>传染病消毒剂配制计算器</h3>
+    <div class="header-wrap">
+        <div class="divider-line"></div>
+        <div class="header-row">
+            <span>消毒剂名称：次氯酸钠(84)</span>
+            <span> </span>
+            <label>原液浓度(%)</label>
+            <input type="number" id="origConc" value="5" min="0.1" step="0.1">
         </div>
+    </div>
 
-        <!-- 第一个横向滚动区域：消毒对象 -->
-        <div class="row-item">
-            <div class="title-label">消毒对象：</div>
-            <div class="scroll-container">
-                <div class="scroll-content">
-                    <select id="disinfectObj">
-                        <option value="sputum">痰液(ml)</option>
-                        <option value="fabricWater">物表(L)</option>
-                        <option value="tablewareWater">餐具(L)</option>
-                        <option value="cleanWater">清洁用具(L)</option>
-                        <option value="rubWater">垃圾(L)</option>
-                        <option value="vomit">呕吐物(ml)</option>
-                        <option value="feces">大便(ml)</option>
-                        <option value="urine">小便(ml)</option>
-                        <option value="sewage">生活污水(L)</option>
-                        <option value="bodyWater">遗体(L)</option>
-                    </select>
-                    <span>，</span>
-                    <input type="number" id="inputVal" placeholder="请先选择消毒对象">
-                </div>
-            </div>
-        </div>
+    <div class="row-item">
+        <div class="title-label">消毒对象：</div>
+        <select id="disinfectObj">
+            <option value="sputum">痰液(ml)</option>
+            <option value="fabricWater">物表(L)</option>
+            <option value="tablewareWater">餐具(L)</option>
+            <option value="cleanWater">清洁用具(L)</option>
+            <option value="rubWater">垃圾(L)</option>
+            <option value="vomit">呕吐物(ml)</option>
+            <option value="feces">大便(ml)</option>
+            <option value="urine">小便(ml)</option>
+            <option value="sewage">生活污水(L)</option>
+            <option value="bodyWater">遗体(L)</option>
+        </select>
+        <span>，</span>
+        <input type="number" id="inputVal" placeholder="请先选择消毒对象">
+    </div>
 
-        <!-- 第二个横向滚动区域：室内消毒 -->
-        <div class="row-item">
-            <div class="title-label">室内消毒：</div>
-            <div class="scroll-container">
-                <div class="scroll-content">
-                    <label>长度</label>
-                    <input type="number" id="len" placeholder="输入米">
-                    <label>；宽度</label>
-                    <input type="number" id="wid" placeholder="输入米">
-                </div>
-            </div>
-        </div>
-        
-        <!-- 第三个横向滚动区域：墙面设置 -->
-        <div class="row-item">
-            <label class="title-label"></label>
-            <div class="scroll-container">
-                <div class="scroll-content">
-                    <label>墙面</label>
-                    <select id="wallType">
-                        <option value="none">不消毒</option>
-                        <option value="soil">泥土</option>
-                        <option value="other">水泥、木板、石灰</option>
-                        <option value="tile">瓷砖</option>
-                    </select>
-                    <label>，用量</label>
-                    <input type="text" id="wallDose">
-                </div>
-            </div>
-        </div>
-        
-        <!-- 第四个横向滚动区域：作用浓度 -->
-        <div class="row-item">
-            <div class="scroll-container">
-                <div class="scroll-content">
-                    <label class="wall-align-label">作用浓度(mg/L)</label>
-                    <input type="number" id="targetEnv" value="1000" min="100" max="99999">
-                </div>
-            </div>
-        </div>
+    <div class="row-item">
+        <div class="title-label">室内消毒：</div>
+        <label>长度</label>
+        <input type="number" id="len" placeholder="输入米">
+        <label>；宽度</label>
+        <input type="number" id="wid" placeholder="输入米">
+    </div>
+    <div class="row-item">
+        <label class="title-label"></label>
+        <label>墙面</label>
+        <select id="wallType">
+            <option value="none">不消毒</option>
+            <option value="soil">泥土</option>
+            <option value="other">水泥、木板、石灰</option>
+            <option value="tile">瓷砖</option>
+        </select>
+        <label>，用量</label>
+        <input type="text" id="wallDose">
+    </div>
+    <div class="row-item">
+        <label class="wall-align-label">作用浓度(mg/L)</label>
+        <input type="number" id="targetEnv" value="1000" min="100" max="99999">
+    </div>
 
-        <div class="btn-row">
-            <button id="calcBtn" onclick="calcAll()">计算</button>
-            <button id="resetBtn" onclick="resetAll()">重置</button>
-            <button id="convertBtn">ml/L转换</button>
-        </div>
+    <div class="btn-row">
+        <button id="calcBtn" onclick="calcAll()">计算</button>
+        <button id="resetBtn" onclick="resetAll()">重置</button>
+        <button id="convertBtn">ml/L转换</button>
+    </div>
 
-        <div class="res" id="result"></div>
+    <div class="res" id="result"></div>
 
-        <div class="tip-desc" id="tipInfo">
+    <div class="tip-desc" id="tipInfo">
 操作说明：
 1.原液浓度：默认值是5%，可重新输入数值；
 2.消毒对象：选择污染物类型，填写消毒液或污染物体积；
 3.室内消毒：长度、宽度输入框填写米数，墙面下拉框选择材质，用量自动匹配，作用浓度默认值1000mg/L，用量及作用浓度输入框可手动输入修改数值；
 4.填完数据点【计算】出配比，【重置】清空恢复初始，【ml/L转换】对计算结果的单位进行ml和L的转换。
-        </div>
-
-        <div class="bottom-info">恩施市疾病预防控制中心</div>
     </div>
+
+    <div class="bottom-info">恩施市疾病预防控制中心</div>
 
 <script>
 let useAutoUnit = true;
@@ -458,11 +411,12 @@ function renderAllResult() {
     }
     if (totalArea > 0) {
         let s = getUnitText(cacheRoom), w = getUnitText(cacheRoomW);
+        //已修改：【室内消杀】→【室内消毒】
         html += `<p><span class="blue-title">【室内消毒】</span>作用浓度<span class="num-normal">${conc}mg/L</span>，地面${formatNum(groundArea)}㎡`;
         if (wallArea > 0) {
             html += `，墙面${formatNum(wallArea)}㎡，总面积${formatNum(totalArea)}㎡`;
         }
-        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；滞留喷洒，作用时间60分钟`;
+        html += `<br>原液 <strong>${s[0]} ${s[1]}</strong>，加水 <strong>${w[0]} ${w[1]}</strong>；喷洒消毒10分钟或擦拭消毒5分钟`;
         if (wallType !== 'none') {
             html += `。喷雾量根据墙面结构不同，以湿润不向下流水为度`;
         }
@@ -603,21 +557,6 @@ function resetAll() {
     cacheRoom = cacheRoomW = 0;
     targetConc = 0;
 }
-
-// 微信端禁止缩放
-document.addEventListener('touchstart', function (event) {
-    if (event.touches.length > 1) {
-        event.preventDefault();
-    }
-}, { passive: false });
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function (event) {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-    }
-    lastTouchEnd = now;
-}, { passive: false });
 </script>
 </body>
 </html>
